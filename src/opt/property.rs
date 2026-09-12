@@ -1,4 +1,5 @@
 /// プロパティを表す
+#[derive(Debug, PartialEq, Clone)]
 pub struct Property {
     /// プロパティ名
     pub name: String,

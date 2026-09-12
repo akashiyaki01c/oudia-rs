@@ -1,4 +1,4 @@
-use crate::opt::{directory::Directory, escape::escape_text, node::Node, property::Property};
+use crate::opt::{escape::escape_text, node::Node};
 
 pub fn serialize_node(node: &Node) -> String {
     match node {
@@ -22,6 +22,7 @@ pub fn serialize_node(node: &Node) -> String {
 
 #[test]
 fn test() {
+    use crate::opt::{directory::Directory, property::Property};
     let root = Node::Directory(Directory::new_with_value(
         "Station",
         vec![

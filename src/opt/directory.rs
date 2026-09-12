@@ -3,6 +3,7 @@ use itertools::Itertools;
 use crate::opt::node::Node;
 
 /// プロパティの集合を表す
+#[derive(Debug, PartialEq, Clone)]
 pub struct Directory {
     /// ディレクトリの名前
     pub name: String,

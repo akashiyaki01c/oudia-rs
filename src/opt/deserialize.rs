@@ -2,14 +2,19 @@ use std::{iter::Peekable, str::Split};
 
 use crate::opt::{directory::Directory, error::Error, node::Node, property::Property};
 
-pub fn deserialize_node(text: &str) -> Result<Node, Error> {
-    let mut lines = text.split("\n").peekable();
-    let result = deserialize_node_inner(&mut lines);
+pub fn deserialize_node(text: &str) -> Result<Vec<Node>, Error> {
+    let mut lines = text.split("\r\n").peekable();
+	let mut nodes = vec![];
+	while lines.peek().is_some() {
+		if let Some(node) = deserialize_node_inner(&mut lines)? {
+			nodes.push(node);
+		}
+	}
     if let Some(_) = lines.peek() {
         return Err(Error::ContainerAborted);
     }
 
-    result
+    Ok(nodes)
 }
 
 pub fn deserialize_property(text: &str) -> Property {
@@ -25,31 +30,43 @@ pub fn deserialize_property(text: &str) -> Property {
     }
 }
 
-pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Node, Error> {
+pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option<Node>, Error> {
     let first_line = iter.next().unwrap();
 
     if first_line.ends_with(".") {
-        let name = &first_line[..first_line.len() - 2];
+		println!("[Directory] {} [/Directory]", first_line);
+        let name = &first_line[..first_line.len() - 1];
         // directory
         let mut nodes = vec![];
         let mut is_success = false;
-        while let Some(next_line) = iter.next() {
-            if next_line == "." {
-                iter.next();
+        while let Some(next_line) = iter.peek() {
+            if *next_line == "." {
                 is_success = true;
+				iter.next();
+				println!("end directory {}", name);
                 break;
             }
-            nodes.push(deserialize_node_inner(iter)?);
+			if let Some(node) = deserialize_node_inner(iter)? {
+				nodes.push(node);
+			}
         }
         if !is_success {
             return Err(Error::ContainerIsNotClosed);
         }
 
-        Ok(Node::Directory(Directory::new_with_value(name, nodes)))
+        Ok(Some(Node::Directory(Directory::new_with_value(name, nodes))))
     } else if first_line.contains("=") {
         // property
-        Ok(Node::Property(deserialize_property(first_line)))
+		println!("{} [Property]", first_line);
+        Ok(Some(Node::Property(deserialize_property(first_line))))
     } else {
-        unreachable!()
+        Ok(None)
     }
+}
+
+#[test]
+fn test() {
+	let data = include_str!("../../test_data/kh.oud2");
+	let result = deserialize_node(data);
+	println!("{:?}", result);
 }
