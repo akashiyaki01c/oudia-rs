@@ -1,6 +1,6 @@
 use std::{iter::Peekable, str::Split};
 
-use crate::opt::{directory::Directory, error::Error, node::Node, property::Property};
+use crate::{model::rosen_file_data::RosenFileData, opt::{directory::Directory, error::Error, node::Node, property::Property}};
 
 pub fn deserialize_node(text: &str) -> Result<Vec<Node>, Error> {
     let mut lines = text.split("\r\n").peekable();
@@ -67,6 +67,7 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
 #[test]
 fn test() {
 	let data = include_str!("../../test_data/kh.oud2");
-	let result = deserialize_node(data);
-	println!("{:?}", result);
+	let result = deserialize_node(data).unwrap();
+    let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", result)));
+	println!("{:?}", file);
 }

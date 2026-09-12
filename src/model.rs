@@ -9,4 +9,5 @@ pub mod jikoku;
 pub mod color;
 pub mod font;
 pub mod disp_prop;
+pub mod error;
 

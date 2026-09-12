@@ -44,4 +44,12 @@ impl Directory {
 	pub fn is_struct(&self) -> bool {
 		self.values.iter().map(|v| v.get_name()).all_unique()
 	}
+
+    pub fn find<'a>(&'a self, name: &str) -> Option<&'a Node> {
+        self.values.iter().find(|v| v.get_name() == name)
+    }
+
+    pub fn find_all<'a>(&'a self, name: &str) -> Vec<&'a Node> {
+        self.values.iter().filter(|v| v.get_name() == name).collect()
+    }
 }
