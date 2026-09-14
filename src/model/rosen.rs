@@ -41,7 +41,7 @@ impl Rosen {
 
             // Dia[]
             for node in dir.find_all("Dia") {
-                // result.dia.push(Dia::from_node(node)?);
+                result.dia.push(Dia::from_node(node)?);
             }
 
             // KitenJikoku

@@ -66,8 +66,9 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
 
 #[test]
 fn test() {
-	let data = include_str!("../../test_data/kh.oud2");
-	let result = deserialize_node(data).unwrap();
+	let data = include_bytes!("../../test_data/kto.oud");
+    let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);
+	let result = deserialize_node(&data).unwrap();
     let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", result)));
 	println!("{:?}", file);
 }
