@@ -47,7 +47,7 @@ impl Rosen {
             // KitenJikoku
             if let Some(kitenjikoku) = dir.find("KitenJikoku") {
                 if let Node::Property(kitenjikoku) = kitenjikoku {
-                    // result.kiten_jikoku = Jikoku::parse(kitenjikoku.value);
+                    result.kiten_jikoku = Jikoku::from_str(&kitenjikoku.value)?;
                 }
             }
 

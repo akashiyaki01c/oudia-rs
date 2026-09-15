@@ -29,7 +29,7 @@ impl RosenFileData {
 
             // DispProp
             if let Some(disp_prop) = dir.find("DispProp") {
-                // result.disp_prop = DispProp::from_node(disp_prop)?;
+                result.disp_prop = DispProp::from_node(disp_prop)?;
             } else {
                 return Err(Error::RosenIsNotFound);
             }
