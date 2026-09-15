@@ -16,9 +16,9 @@ impl RosenFileData {
         if let Node::Property(_) = node {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
-			for node in &dir.values {
-				println!("{},{:?}", node.get_name(), node.get_name().as_bytes());
-			}
+            for node in &dir.values {
+                println!("{},{:?}", node.get_name(), node.get_name().as_bytes());
+            }
 
             // Rosen
             if let Some(rosen) = dir.find("Rosen") {

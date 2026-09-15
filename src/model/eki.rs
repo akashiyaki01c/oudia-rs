@@ -43,24 +43,28 @@ impl Eki {
                 todo!();
             }
 
-			// Kyoukaisen
+            // Kyoukaisen
             if let Some(kyoukaisen) = dir.find("Kyoukaisen")
-                && let Node::Property(kyoukaisen) = kyoukaisen {
-                    result.kyoukaisen = kyoukaisen.value == "1";
-                }
+                && let Node::Property(kyoukaisen) = kyoukaisen
+            {
+                result.kyoukaisen = kyoukaisen.value == "1";
+            }
 
-			// m_bDiagramRessyajouhouHyoujiKudari
-			if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiKudari")
-                && let Node::Property(hyouji) = hyouji {
-                    result.diagram_ressyajouhou_hyouji_kudari = DiagramRessyajouhouHyouji::from_str(&hyouji.value)?;
-                }
+            // m_bDiagramRessyajouhouHyoujiKudari
+            if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiKudari")
+                && let Node::Property(hyouji) = hyouji
+            {
+                result.diagram_ressyajouhou_hyouji_kudari =
+                    DiagramRessyajouhouHyouji::from_str(&hyouji.value)?;
+            }
 
-			// m_bDiagramRessyajouhouHyoujiNobori
-			if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiNobori")
-                && let Node::Property(hyouji) = hyouji {
-                    result.diagram_ressyajouhou_hyouji_kudari = DiagramRessyajouhouHyouji::from_str(&hyouji.value)?;
-                }
-			
+            // m_bDiagramRessyajouhouHyoujiNobori
+            if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiNobori")
+                && let Node::Property(hyouji) = hyouji
+            {
+                result.diagram_ressyajouhou_hyouji_kudari =
+                    DiagramRessyajouhouHyouji::from_str(&hyouji.value)?;
+            }
         } else {
             unreachable!()
         }

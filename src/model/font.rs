@@ -12,7 +12,7 @@ pub struct FontProp {
     itaric: bool,
     underine: bool,
     strike_out: bool,
-	escapement: usize,
+    escapement: usize,
 }
 impl FontProp {
     pub fn from_str(value: &str) -> Result<Self, Error> {
@@ -31,48 +31,48 @@ impl FontProp {
 
         // PointTextHeight
         if let Some(prop) = connected_string.get("PointTextHeight") {
-			result.point_text_height = prop.parse().map_err(|_| Error::TodoError)?;
-		}
+            result.point_text_height = prop.parse().map_err(|_| Error::TodoError)?;
+        }
 
-		// LogicalunitTextHeight
-		if let Some(prop) = connected_string.get("LogicalunitTextHeight") {
-			result.logicalunit_text_height = prop.parse().map_err(|_| Error::TodoError)?;
-		}
+        // LogicalunitTextHeight
+        if let Some(prop) = connected_string.get("LogicalunitTextHeight") {
+            result.logicalunit_text_height = prop.parse().map_err(|_| Error::TodoError)?;
+        }
 
-		// LogicalunitCellHeight
-		if let Some(prop) = connected_string.get("LogicalunitCellHeight") {
-			result.logicalunit_cell_height = prop.parse().map_err(|_| Error::TodoError)?;
-		}
+        // LogicalunitCellHeight
+        if let Some(prop) = connected_string.get("LogicalunitCellHeight") {
+            result.logicalunit_cell_height = prop.parse().map_err(|_| Error::TodoError)?;
+        }
 
-		// Facename
-		if let Some(prop) = connected_string.get("Facename") {
-			result.facename = prop.to_string();
-		}
+        // Facename
+        if let Some(prop) = connected_string.get("Facename") {
+            result.facename = prop.to_string();
+        }
 
-		// Bold
-		if let Some(prop) = connected_string.get("Bold") {
-			result.bold = *prop == "1";
-		}
+        // Bold
+        if let Some(prop) = connected_string.get("Bold") {
+            result.bold = *prop == "1";
+        }
 
-		// Itaric
-		if let Some(prop) = connected_string.get("Itaric") {
-			result.bold = *prop == "1";
-		}
+        // Itaric
+        if let Some(prop) = connected_string.get("Itaric") {
+            result.bold = *prop == "1";
+        }
 
-		// Underline
-		if let Some(prop) = connected_string.get("Underline") {
-			result.underine = *prop == "1";
-		}
+        // Underline
+        if let Some(prop) = connected_string.get("Underline") {
+            result.underine = *prop == "1";
+        }
 
-		// StrikeOut
-		if let Some(prop) = connected_string.get("StrikeOut") {
-			result.strike_out = *prop == "1";
-		}
+        // StrikeOut
+        if let Some(prop) = connected_string.get("StrikeOut") {
+            result.strike_out = *prop == "1";
+        }
 
-		// Escapement
-		if let Some(prop) = connected_string.get("Escapement") {
-			result.escapement = prop.parse().map_err(|_| Error::TodoError)?;
-		}
+        // Escapement
+        if let Some(prop) = connected_string.get("Escapement") {
+            result.escapement = prop.parse().map_err(|_| Error::TodoError)?;
+        }
 
         Ok(result)
     }

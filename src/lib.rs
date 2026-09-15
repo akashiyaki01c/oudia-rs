@@ -1,5 +1,5 @@
-pub mod opt;
 pub mod model;
+pub mod opt;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right

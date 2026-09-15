@@ -46,25 +46,28 @@ impl Rosen {
 
             // KitenJikoku
             if let Some(kitenjikoku) = dir.find("KitenJikoku")
-                && let Node::Property(kitenjikoku) = kitenjikoku {
-                    result.kiten_jikoku = Jikoku::from_str(&kitenjikoku.value)?;
-                }
+                && let Node::Property(kitenjikoku) = kitenjikoku
+            {
+                result.kiten_jikoku = Jikoku::from_str(&kitenjikoku.value)?;
+            }
 
             // DiagramDgrYZahyouKyoriDefault
             result.diagram_dgr_y_zahyou_kyori_default = 60;
             if let Some(zahyou_kyori) = dir.find("DiagramDgrYZahyouKyoriDefault")
-                && let Node::Property(zahyou_kyori) = zahyou_kyori {
-                    result.diagram_dgr_y_zahyou_kyori_default = zahyou_kyori
-                        .value
-                        .parse()
-                        .map_err(|_| Error::DiagramDgrYZahyouKyoriDefaultError)?
-                }
+                && let Node::Property(zahyou_kyori) = zahyou_kyori
+            {
+                result.diagram_dgr_y_zahyou_kyori_default = zahyou_kyori
+                    .value
+                    .parse()
+                    .map_err(|_| Error::DiagramDgrYZahyouKyoriDefaultError)?
+            }
 
             // Comment
             if let Some(comment) = dir.find("Comment")
-                && let Node::Property(comment) = comment {
-                    result.comment = comment.value.clone();
-                }
+                && let Node::Property(comment) = comment
+            {
+                result.comment = comment.value.clone();
+            }
         } else {
             unreachable!()
         }

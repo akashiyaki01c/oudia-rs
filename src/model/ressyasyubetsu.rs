@@ -32,46 +32,52 @@ impl Ressyasyubetsu {
 
             // Ryakusyou
             if let Some(ryakusyou) = dir.find("Ryakusyou")
-                && let Node::Property(ryakusyou) = ryakusyou {
-                    result.ryakusyou = ryakusyou.value.clone();
-                }
+                && let Node::Property(ryakusyou) = ryakusyou
+            {
+                result.ryakusyou = ryakusyou.value.clone();
+            }
 
             // JikokuhyouMojiColor
             if let Some(color) = dir.find("JikokuhyouMojiColor")
-                && let Node::Property(color) = color {
-                    result.jikokuhyou_moji_color = ColorProp::from_str(&color.value)?;
-                }
+                && let Node::Property(color) = color
+            {
+                result.jikokuhyou_moji_color = ColorProp::from_str(&color.value)?;
+            }
 
             // JikokuhyouFontIndex
             if let Some(index) = dir.find("JikokuhyouFontIndex")
-                && let Node::Property(index) = index {
-                    result.jikokuhyou_font_index =
-                        index.value.parse().map_err(|_| Error::TodoError)?;
-                }
+                && let Node::Property(index) = index
+            {
+                result.jikokuhyou_font_index = index.value.parse().map_err(|_| Error::TodoError)?;
+            }
 
             // DiagramSenColor
             if let Some(color) = dir.find("DiagramSenColor")
-                && let Node::Property(color) = color {
-                    result.diagram_sen_color = ColorProp::from_str(&color.value)?;
-                }
+                && let Node::Property(color) = color
+            {
+                result.diagram_sen_color = ColorProp::from_str(&color.value)?;
+            }
 
             // DiagramSenStyle
             if let Some(style) = dir.find("DiagramSenStyle")
-                && let Node::Property(style) = style {
-                    result.diagram_sen_style = SenStype::from_str(&style.value)?;
-                }
+                && let Node::Property(style) = style
+            {
+                result.diagram_sen_style = SenStype::from_str(&style.value)?;
+            }
 
             // DiagramSenIsBold
             if let Some(style) = dir.find("DiagramSenIsBold")
-                && let Node::Property(style) = style {
-                    result.diagram_sen_is_bold = style.value == "1";
-                }
+                && let Node::Property(style) = style
+            {
+                result.diagram_sen_is_bold = style.value == "1";
+            }
 
             // StopMarkDrawType
             if let Some(style) = dir.find("StopMarkDrawType")
-                && let Node::Property(style) = style {
-                    result.stop_mark_draw_type = StopMarkDrawType::from_str(&style.value)?;
-                }
+                && let Node::Property(style) = style
+            {
+                result.stop_mark_draw_type = StopMarkDrawType::from_str(&style.value)?;
+            }
         } else {
             unreachable!()
         }

@@ -28,17 +28,17 @@ impl Dia {
                 }
                 let kudari: Result<Vec<Ressya>, Error> =
                     kudari.values.iter().map(Ressya::from_node).collect();
-				result.kudari = kudari?;
+                result.kudari = kudari?;
             }
 
-			// Nobori
+            // Nobori
             if let Some(Node::Directory(nobori)) = dir.find("Nobori") {
                 if !nobori.is_array() {
                     return Err(Error::TodoError);
                 }
                 let nobori: Result<Vec<Ressya>, Error> =
                     nobori.values.iter().map(Ressya::from_node).collect();
-				result.nobori = nobori?;
+                result.nobori = nobori?;
             }
         } else {
             unreachable!()

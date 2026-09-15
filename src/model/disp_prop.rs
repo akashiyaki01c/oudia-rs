@@ -18,7 +18,7 @@ pub struct DispProp {
     dia_ressya_color: ColorProp,
     dia_jiku_color: ColorProp,
     ekimei_length: usize,
-	jikokuhyou_ressya_width: usize,
+    jikokuhyou_ressya_width: usize,
     dia_ressyajouhou_hyouji_eki_order_kudari: usize,
     dia_ressyajouhou_hyouji_eki_order_nobori: usize,
 }
@@ -32,9 +32,10 @@ impl DispProp {
             // JikokuhyouFont
             for (i, font) in dir.find_all("DiaName").iter().enumerate() {
                 if let Node::Property(font) = font
-                    && let Some(v) = result.jikokuhyou_font.get_mut(i) {
-                        *v = FontProp::from_str(&font.value)?;
-                    }
+                    && let Some(v) = result.jikokuhyou_font.get_mut(i)
+                {
+                    *v = FontProp::from_str(&font.value)?;
+                }
             }
 
             // JikokuhyouVFont
@@ -42,54 +43,55 @@ impl DispProp {
                 result.jikokuhyou_v_font = FontProp::from_str(&font.value)?;
             }
 
-			// DiaEkimeiFont
+            // DiaEkimeiFont
             if let Some(Node::Property(font)) = dir.find("DiaEkimeiFont") {
                 result.dia_ekimei_font = FontProp::from_str(&font.value)?;
             }
 
-			// DiaJikokuFont
+            // DiaJikokuFont
             if let Some(Node::Property(font)) = dir.find("DiaJikokuFont") {
                 result.dia_jikoku_font = FontProp::from_str(&font.value)?;
             }
 
-			// DiaRessyaFont
+            // DiaRessyaFont
             if let Some(Node::Property(font)) = dir.find("DiaRessyaFont") {
                 result.dia_ressya_font = FontProp::from_str(&font.value)?;
             }
 
-			// CommentFont
+            // CommentFont
             if let Some(Node::Property(font)) = dir.find("CommentFont") {
                 result.comment_font = FontProp::from_str(&font.value)?;
             }
 
-			// DiaMojiColor
+            // DiaMojiColor
             if let Some(Node::Property(font)) = dir.find("DiaMojiColor") {
                 result.dia_moji_color = ColorProp::from_str(&font.value)?;
             }
 
-			// DiaHaikeiColor
+            // DiaHaikeiColor
             if let Some(Node::Property(font)) = dir.find("DiaHaikeiColor") {
                 result.dia_haikei_color = ColorProp::from_str(&font.value)?;
             }
 
-			// DiaRessyaColor
+            // DiaRessyaColor
             if let Some(Node::Property(font)) = dir.find("DiaRessyaColor") {
                 result.dia_ressya_color = ColorProp::from_str(&font.value)?;
             }
 
-			// DiaJikuColor
+            // DiaJikuColor
             if let Some(Node::Property(font)) = dir.find("DiaJikuColor") {
                 result.dia_jiku_color = ColorProp::from_str(&font.value)?;
             }
 
-			// EkimeiLength
+            // EkimeiLength
             if let Some(Node::Property(font)) = dir.find("EkimeiLength") {
                 result.ekimei_length = font.value.parse().map_err(|_| Error::TodoError)?;
             }
 
-			// JikokuhyouRessyaWidth
+            // JikokuhyouRessyaWidth
             if let Some(Node::Property(font)) = dir.find("JikokuhyouRessyaWidth") {
-                result.jikokuhyou_ressya_width = font.value.parse().map_err(|_| Error::TodoError)?;
+                result.jikokuhyou_ressya_width =
+                    font.value.parse().map_err(|_| Error::TodoError)?;
             }
         } else {
             unreachable!()

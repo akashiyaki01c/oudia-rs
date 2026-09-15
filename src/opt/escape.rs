@@ -7,5 +7,5 @@ pub fn escape_text(text: String) -> String {
 
 /// 文字列のエスケープを解除する関数
 pub fn unescape_text(text: String) -> String {
-	text.replace("\\n", "\n").replace("\\\\", "\\")
+    text.replace("\\n", "\n").replace("\\\\", "\\")
 }

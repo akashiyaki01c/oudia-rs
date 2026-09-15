@@ -52,7 +52,7 @@ impl Ressya {
                 result.ekijikoku = ekijikoku?;
             }
 
-			// Bikou
+            // Bikou
             if let Some(Node::Property(bikou)) = dir.find("Bikou") {
                 result.bikou = bikou.value.to_string();
             }
