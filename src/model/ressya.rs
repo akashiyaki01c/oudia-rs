@@ -47,7 +47,7 @@ impl Ressya {
                 let ekijikoku: Result<Vec<Ekijikoku>, Error> = ekijikoku
                     .value
                     .split(",")
-                    .map(|v| Ekijikoku::from_str(v))
+                    .map(Ekijikoku::from_str)
                     .collect();
                 result.ekijikoku = ekijikoku?;
             }

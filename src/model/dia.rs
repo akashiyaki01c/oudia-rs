@@ -27,7 +27,7 @@ impl Dia {
                     return Err(Error::TodoError);
                 }
                 let kudari: Result<Vec<Ressya>, Error> =
-                    kudari.values.iter().map(|v| Ressya::from_node(v)).collect();
+                    kudari.values.iter().map(Ressya::from_node).collect();
 				result.kudari = kudari?;
             }
 
@@ -37,7 +37,7 @@ impl Dia {
                     return Err(Error::TodoError);
                 }
                 let nobori: Result<Vec<Ressya>, Error> =
-                    nobori.values.iter().map(|v| Ressya::from_node(v)).collect();
+                    nobori.values.iter().map(Ressya::from_node).collect();
 				result.nobori = nobori?;
             }
         } else {

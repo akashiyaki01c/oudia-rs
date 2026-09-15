@@ -10,11 +10,7 @@ pub struct Jikoku {
 impl Jikoku {
     pub fn adjust_total_seconds(self) -> Self {
         Self {
-            total_seconds: if let Some(total_seconds) = self.total_seconds {
-                Some(total_seconds % TOTAL_SECONDS_PER_DAY)
-            } else {
-                None
-            },
+            total_seconds: self.total_seconds.map(|total_seconds| total_seconds % TOTAL_SECONDS_PER_DAY),
         }
     }
 

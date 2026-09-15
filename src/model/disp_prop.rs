@@ -31,11 +31,10 @@ impl DispProp {
         } else if let Node::Directory(dir) = node {
             // JikokuhyouFont
             for (i, font) in dir.find_all("DiaName").iter().enumerate() {
-                if let Node::Property(font) = font {
-                    if let Some(v) = result.jikokuhyou_font.get_mut(i) {
+                if let Node::Property(font) = font
+                    && let Some(v) = result.jikokuhyou_font.get_mut(i) {
                         *v = FontProp::from_str(&font.value)?;
                     }
-                }
             }
 
             // JikokuhyouVFont
