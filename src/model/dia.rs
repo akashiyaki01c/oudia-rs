@@ -3,10 +3,14 @@ use crate::{
     opt::node::Node,
 };
 
+/// 1つの時刻表を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Dia {
+    /// 時刻表名
     dia_name: String,
+    /// 下り列車のリスト
     kudari: Vec<Ressya>,
+    /// 上り列車のリスト
     nobori: Vec<Ressya>,
 }
 impl Dia {

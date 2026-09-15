@@ -1,10 +1,15 @@
 use crate::{model::error::Error, opt::node::Node};
 
+/// 一つの駅を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Eki {
+    /// 駅名
     ekimei: String,
+    /// 駅時刻形式
     ekijikokukeisiki: Ekijikokukeisiki,
+    /// 駅規模
     ekikibo: Ekikibo,
+    /// 境界線を引くか
     kyoukaisen: bool,
     diagram_ressyajouhou_hyouji_kudari: DiagramRessyajouhouHyouji,
     diagram_ressyajouhou_hyouji_nobori: DiagramRessyajouhouHyouji,
@@ -73,12 +78,17 @@ impl Eki {
     }
 }
 
+/// 駅表示形式を表す
 #[derive(Debug, Default, PartialEq, Clone)]
 pub enum Ekijikokukeisiki {
+    /// 発車時刻のみ
     #[default]
     Hatsu,
+    /// 発車時刻・到着時刻
     Hatsuchaku,
+    /// 下りは着時刻のみ、上りは発時刻のみ
     KudariChaku,
+    /// 下りは発時刻のみ、上りは着時刻のみ
     NoboriChaku,
 }
 impl Ekijikokukeisiki {
@@ -93,10 +103,13 @@ impl Ekijikokukeisiki {
     }
 }
 
+/// 駅規模
 #[derive(Debug, Default, PartialEq, Clone)]
 pub enum Ekikibo {
+    /// 一般駅
     #[default]
     Ippan,
+    /// 主要駅
     Syuyou,
 }
 impl Ekikibo {

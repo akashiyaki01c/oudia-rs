@@ -3,14 +3,22 @@ use crate::{
     opt::node::Node,
 };
 
+/// 路線を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Rosen {
+    /// 路線名
     rosenmei: String,
+    /// 駅の一覧
     eki: Vec<Eki>,
+    /// 列車種別の一覧
     ressyasyubetsu: Vec<Ressyasyubetsu>,
+    /// 時刻表の一覧
     dia: Vec<Dia>,
+    /// ダイヤグラムの起点時刻
     kiten_jikoku: Jikoku,
+    /// ダイヤグラムにおける駅間座標の既定値
     diagram_dgr_y_zahyou_kyori_default: usize,
+    ///　コメント
     comment: String,
 }
 impl Rosen {

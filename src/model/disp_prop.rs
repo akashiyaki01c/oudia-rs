@@ -1,10 +1,14 @@
+use std::str::FromStr;
+
 use crate::{
     model::{color::ColorProp, error::Error, font::FontProp},
     opt::node::Node,
 };
 
+/// 時刻表のフォント設定数
 const JIKOKUHYOUFONT_COUNT: usize = 8;
 
+/// ダイヤグラムファイルの表示設定を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct DispProp {
     jikokuhyou_font: [FontProp; JIKOKUHYOUFONT_COUNT],

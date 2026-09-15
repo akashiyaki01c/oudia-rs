@@ -5,13 +5,20 @@ use crate::{
     opt::node::Node,
 };
 
+/// 1つの列車を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Ressya {
+    /// 列車種別のインデックス
     ressyasyubetsu_index: usize,
+    /// 列車番号
     ressyabangou: String,
+    /// 列車名
     ressyamei: String,
+    /// 号数
     gousuu: String,
+    /// 駅時刻のリスト
     ekijikoku: Vec<Ekijikoku>,
+    /// 備考
     bikou: String,
 }
 impl Ressya {

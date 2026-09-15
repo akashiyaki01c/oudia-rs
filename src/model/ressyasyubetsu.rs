@@ -1,17 +1,28 @@
+use std::str::FromStr;
+
 use crate::{
     model::{color::ColorProp, error::Error},
     opt::node::Node,
 };
 
+/// 1つの列車種別を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Ressyasyubetsu {
+    /// 列車種別名
     syubetsumei: String,
+    /// 列車種別名の略称
     ryakusyou: String,
+    /// 時刻表における文字色
     jikokuhyou_moji_color: ColorProp,
+    /// 時刻表におけるフォントの設定
     jikokuhyou_font_index: usize,
+    /// ダイヤグラム上の列車線色
     diagram_sen_color: ColorProp,
+    /// ダイヤグラム上の列車線種
     diagram_sen_style: SenStype,
+    /// ダイヤグラム上の線が太いか
     diagram_sen_is_bold: bool,
+    /// ダイヤグラム上の停車マーク種別
     stop_mark_draw_type: StopMarkDrawType,
 }
 impl Ressyasyubetsu {
@@ -86,12 +97,17 @@ impl Ressyasyubetsu {
     }
 }
 
+/// ダイヤグラム上での列車線種
 #[derive(Debug, Default, PartialEq, Clone)]
 pub enum SenStype {
+    /// 実線
     #[default]
     Jissen,
+    /// 破線
     Hasen,
+    /// 点線
     Tensen,
+    /// 一点鎖線
     Ittensasen,
 }
 impl SenStype {
@@ -106,6 +122,7 @@ impl SenStype {
     }
 }
 
+/// ダイヤグラム上の停車マーク種別
 #[derive(Debug, Default, PartialEq, Clone)]
 pub enum StopMarkDrawType {
     DrawOnStop,

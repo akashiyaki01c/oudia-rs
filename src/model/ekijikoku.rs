@@ -1,10 +1,14 @@
 use crate::model::{error::Error, jikoku::Jikoku};
 use std::str::FromStr;
 
+/// 一つの駅時刻を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Ekijikoku {
+    /// 駅扱いの種別
     ekiatsukai: usize,
+    /// 到着時刻
     chaku: Jikoku,
+    /// 発車時刻
     hatsu: Jikoku,
 }
 

@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::model::error::Error;
 
+/// 1つのフォント設定を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct FontProp {
     point_text_height: usize,

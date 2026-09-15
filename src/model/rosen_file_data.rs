@@ -3,10 +3,14 @@ use crate::{
     opt::node::Node,
 };
 
+/// 1つのOuDiaファイルを表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct RosenFileData {
+    /// 路線
     rosen: Rosen,
+    /// ダイヤグラムファイルの表示設定
     disp_prop: DispProp,
+    /// 作成されたアプリ名
     file_type_app_comment: String,
 }
 impl RosenFileData {

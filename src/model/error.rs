@@ -1,5 +1,6 @@
 use thiserror::Error;
 
+/// モデル構築・操作上のエラーを表す構造体
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Node type is different")]

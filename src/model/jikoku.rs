@@ -2,8 +2,10 @@ use crate::model::error::Error;
 
 const TOTAL_SECONDS_PER_DAY: usize = 24 * 60 * 60;
 
+/// 1つの秒単位の時刻情報を表す構造体
 #[derive(Debug, Default, PartialEq, Clone, Copy, Eq)]
 pub struct Jikoku {
+    /// 0:00:00からの経過秒
     total_seconds: Option<usize>,
 }
 
