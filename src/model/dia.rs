@@ -1,6 +1,6 @@
 use crate::{
     model::{error::Error, ressya::Ressya},
-    opt::node::Node,
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 1つの時刻表を表す構造体
@@ -50,4 +50,26 @@ impl Dia {
 
         Ok(result)
     }
+
+    pub(crate) fn to_node(&self) -> Node {
+        Node::Directory(Directory::new_with_value(
+            "Dia",
+            vec![
+                property("DiaName", &self.dia_name),
+                direction("Kudari", &self.kudari),
+                direction("Nobori", &self.nobori),
+            ],
+        ))
+    }
+}
+
+fn direction(name: &str, ressya: &[Ressya]) -> Node {
+    Node::Directory(Directory::new_with_value(
+        name,
+        ressya.iter().map(Ressya::to_node).collect(),
+    ))
+}
+
+fn property(name: &str, value: impl Into<String>) -> Node {
+    Node::Property(Property::new_with_value(name, value.into()))
 }

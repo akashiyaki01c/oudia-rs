@@ -78,4 +78,19 @@ impl Jikoku {
             _ => Err(Error::TodoError),
         }
     }
+
+    pub fn to_oudia_string(self) -> String {
+        self.total_seconds
+            .map(|total_seconds| {
+                let hours = total_seconds / 3600;
+                let minutes = total_seconds / 60 % 60;
+                let seconds = total_seconds % 60;
+                if seconds == 0 {
+                    format!("{hours:02}{minutes:02}")
+                } else {
+                    format!("{hours:02}{minutes:02}{seconds:02}")
+                }
+            })
+            .unwrap_or_default()
+    }
 }

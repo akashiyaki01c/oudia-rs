@@ -43,3 +43,26 @@ impl FromStr for Ekijikoku {
         })
     }
 }
+
+impl Ekijikoku {
+    pub(crate) fn to_oudia_string(&self) -> String {
+        let times = match (
+            self.chaku.to_oudia_string().is_empty(),
+            self.hatsu.to_oudia_string().is_empty(),
+        ) {
+            (true, true) => String::new(),
+            (true, false) => self.hatsu.to_oudia_string(),
+            (false, true) => format!("{}/", self.chaku.to_oudia_string()),
+            (false, false) => format!(
+                "{}/{}",
+                self.chaku.to_oudia_string(),
+                self.hatsu.to_oudia_string()
+            ),
+        };
+        if times.is_empty() && self.ekiatsukai == 0 {
+            String::new()
+        } else {
+            format!("{};{}", self.ekiatsukai, times)
+        }
+    }
+}

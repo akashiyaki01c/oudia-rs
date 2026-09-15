@@ -57,7 +57,7 @@ impl FontProp {
 
         // Itaric
         if let Some(prop) = connected_string.get("Itaric") {
-            result.bold = *prop == "1";
+            result.itaric = *prop == "1";
         }
 
         // Underline
@@ -76,5 +76,20 @@ impl FontProp {
         }
 
         Ok(result)
+    }
+
+    pub fn to_oudia_string(&self) -> String {
+        format!(
+            "PointTextHeight={};LogicalunitTextHeight={};LogicalunitCellHeight={};Facename={};Bold={};Itaric={};Underline={};StrikeOut={};Escapement={}",
+            self.point_text_height,
+            self.logicalunit_text_height,
+            self.logicalunit_cell_height,
+            self.facename,
+            self.bold as u8,
+            self.itaric as u8,
+            self.underine as u8,
+            self.strike_out as u8,
+            self.escapement,
+        )
     }
 }

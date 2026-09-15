@@ -9,12 +9,12 @@ pub fn serialize_node(node: &Node) -> String {
         ),
         Node::Directory(directory) => {
             let mut result = String::new();
-            result += &format!("{}.\n", escape_text(directory.name.clone()));
+            result += &format!("{}.\r\n", escape_text(directory.name.clone()));
             for node in &directory.values {
                 result += &serialize_node(node);
-                result += "\n";
+                result += "\r\n";
             }
-            result += ".\n";
+            result += ".\r\n";
             result
         }
     }

@@ -1,4 +1,7 @@
-use crate::{model::error::Error, opt::node::Node};
+use crate::{
+    model::error::Error,
+    opt::{directory::Directory, node::Node, property::Property},
+};
 
 /// 一つの駅を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
@@ -76,6 +79,30 @@ impl Eki {
 
         Ok(result)
     }
+
+    pub(crate) fn to_node(&self) -> Node {
+        Node::Directory(Directory::new_with_value(
+            "Eki",
+            vec![
+                property("Ekimei", &self.ekimei),
+                property("Ekijikokukeisiki", self.ekijikokukeisiki.to_oudia_string()),
+                property("Ekikibo", self.ekikibo.to_oudia_string()),
+                property("Kyoukaisen", if self.kyoukaisen { "1" } else { "0" }),
+                property(
+                    "DiagramRessyajouhouHyoujiKudari",
+                    self.diagram_ressyajouhou_hyouji_kudari.to_oudia_string(),
+                ),
+                property(
+                    "DiagramRessyajouhouHyoujiNobori",
+                    self.diagram_ressyajouhou_hyouji_nobori.to_oudia_string(),
+                ),
+            ],
+        ))
+    }
+}
+
+fn property(name: &str, value: impl Into<String>) -> Node {
+    Node::Property(Property::new_with_value(name, value.into()))
 }
 
 /// 駅表示形式を表す
@@ -101,6 +128,15 @@ impl Ekijikokukeisiki {
             _ => Err(Error::TodoError),
         }
     }
+
+    fn to_oudia_string(&self) -> &'static str {
+        match self {
+            Self::Hatsu => "Jikokukeisiki_Hatsu",
+            Self::Hatsuchaku => "Jikokukeisiki_Hatsuchaku",
+            Self::KudariChaku => "Jikokukeisiki_KudariChaku",
+            Self::NoboriChaku => "Jikokukeisiki_NoboriChaku",
+        }
+    }
 }
 
 /// 駅規模
@@ -120,6 +156,13 @@ impl Ekikibo {
             _ => Err(Error::TodoError),
         }
     }
+
+    fn to_oudia_string(&self) -> &'static str {
+        match self {
+            Self::Ippan => "Ekikibo_Ippan",
+            Self::Syuyou => "Ekikibo_Syuyou",
+        }
+    }
 }
 
 #[derive(Debug, Default, PartialEq, Clone)]
@@ -136,6 +179,14 @@ impl DiagramRessyajouhouHyouji {
             "DiagramRessyajouhouHyouji_Anytime" => Ok(Self::Anytime),
             "DiagramRessyajouhouHyouji_Not" => Ok(Self::Not),
             _ => Err(Error::TodoError),
+        }
+    }
+
+    fn to_oudia_string(&self) -> &'static str {
+        match self {
+            Self::Origin => "",
+            Self::Anytime => "DiagramRessyajouhouHyouji_Anytime",
+            Self::Not => "DiagramRessyajouhouHyouji_Not",
         }
     }
 }

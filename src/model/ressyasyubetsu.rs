@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::{
     model::{color::ColorProp, error::Error},
-    opt::node::Node,
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 1つの列車種別を表す構造体
@@ -95,6 +95,38 @@ impl Ressyasyubetsu {
 
         Ok(result)
     }
+
+    pub(crate) fn to_node(&self) -> Node {
+        Node::Directory(Directory::new_with_value(
+            "Ressyasyubetsu",
+            vec![
+                property("Syubetsumei", &self.syubetsumei),
+                property("Ryakusyou", &self.ryakusyou),
+                property(
+                    "JikokuhyouMojiColor",
+                    self.jikokuhyou_moji_color.to_string(),
+                ),
+                property(
+                    "JikokuhyouFontIndex",
+                    self.jikokuhyou_font_index.to_string(),
+                ),
+                property("DiagramSenColor", self.diagram_sen_color.to_string()),
+                property("DiagramSenStyle", self.diagram_sen_style.to_oudia_string()),
+                property(
+                    "DiagramSenIsBold",
+                    if self.diagram_sen_is_bold { "1" } else { "0" },
+                ),
+                property(
+                    "StopMarkDrawType",
+                    self.stop_mark_draw_type.to_oudia_string(),
+                ),
+            ],
+        ))
+    }
+}
+
+fn property(name: &str, value: impl Into<String>) -> Node {
+    Node::Property(Property::new_with_value(name, value.into()))
 }
 
 /// ダイヤグラム上での列車線種
@@ -120,6 +152,15 @@ impl SenStype {
             _ => Err(Error::TodoError),
         }
     }
+
+    fn to_oudia_string(&self) -> &'static str {
+        match self {
+            Self::Jissen => "SenStyle_Jissen",
+            Self::Hasen => "SenStyle_Hasen",
+            Self::Tensen => "SenStyle_Tensen",
+            Self::Ittensasen => "SenStyle_Ittensasen",
+        }
+    }
 }
 
 /// ダイヤグラム上の停車マーク種別
@@ -137,6 +178,14 @@ impl StopMarkDrawType {
             "EStopMarkDrawType_Nothing" => Ok(Self::Nothing),
             "EStopMarkDrawType_DrawOnPass" => Ok(Self::DrawOnPass),
             _ => Err(Error::TodoError),
+        }
+    }
+
+    fn to_oudia_string(&self) -> &'static str {
+        match self {
+            Self::DrawOnStop => "EStopMarkDrawType_DrawOnStop",
+            Self::Nothing => "EStopMarkDrawType_Nothing",
+            Self::DrawOnPass => "EStopMarkDrawType_DrawOnPass",
         }
     }
 }

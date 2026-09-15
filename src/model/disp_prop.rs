@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::{
     model::{color::ColorProp, error::Error, font::FontProp},
-    opt::node::Node,
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 時刻表のフォント設定数
@@ -103,4 +103,33 @@ impl DispProp {
 
         Ok(result)
     }
+
+    pub(crate) fn to_node(&self) -> Node {
+        let mut values = self
+            .jikokuhyou_font
+            .iter()
+            .map(|font| property("DiaName", font.to_oudia_string()))
+            .collect::<Vec<_>>();
+        values.extend([
+            property("JikokuhyouVFont", self.jikokuhyou_v_font.to_oudia_string()),
+            property("DiaEkimeiFont", self.dia_ekimei_font.to_oudia_string()),
+            property("DiaJikokuFont", self.dia_jikoku_font.to_oudia_string()),
+            property("DiaRessyaFont", self.dia_ressya_font.to_oudia_string()),
+            property("CommentFont", self.comment_font.to_oudia_string()),
+            property("DiaMojiColor", self.dia_moji_color.to_string()),
+            property("DiaHaikeiColor", self.dia_haikei_color.to_string()),
+            property("DiaRessyaColor", self.dia_ressya_color.to_string()),
+            property("DiaJikuColor", self.dia_jiku_color.to_string()),
+            property("EkimeiLength", self.ekimei_length.to_string()),
+            property(
+                "JikokuhyouRessyaWidth",
+                self.jikokuhyou_ressya_width.to_string(),
+            ),
+        ]);
+        Node::Directory(Directory::new_with_value("DispProp", values))
+    }
+}
+
+fn property(name: &str, value: impl Into<String>) -> Node {
+    Node::Property(Property::new_with_value(name, value.into()))
 }

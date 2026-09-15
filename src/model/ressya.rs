@@ -2,12 +2,14 @@ use std::str::FromStr;
 
 use crate::{
     model::{ekijikoku::Ekijikoku, error::Error},
-    opt::node::Node,
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 1つの列車を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Ressya {
+    /// 列車の方向
+    houkou: Houkou,
     /// 列車種別のインデックス
     ressyasyubetsu_index: usize,
     /// 列車番号
@@ -28,6 +30,11 @@ impl Ressya {
         if let Node::Property(_) = node {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
+            // Houkou
+            if let Some(Node::Property(houkou)) = dir.find("Houkou") {
+                result.houkou = Houkou::from_str(&houkou.value)?;
+            }
+
             // Syubetsu
             if let Some(Node::Property(syubetsu)) = dir.find("Syubetsu") {
                 result.ressyasyubetsu_index =
@@ -68,5 +75,55 @@ impl Ressya {
         }
 
         Ok(result)
+    }
+
+    pub(crate) fn to_node(&self) -> Node {
+        Node::Directory(Directory::new_with_value(
+            "Ressya",
+            vec![
+                property("Houkou", self.houkou.to_string()),
+                property("Syubetsu", self.ressyasyubetsu_index.to_string()),
+                property("Ressyabangou", &self.ressyabangou),
+                property("Ressyamei", &self.ressyamei),
+                property("Gosuu", &self.gousuu),
+                property(
+                    "EkiJikoku",
+                    self.ekijikoku
+                        .iter()
+                        .map(Ekijikoku::to_oudia_string)
+                        .collect::<Vec<_>>()
+                        .join(","),
+                ),
+                property("Bikou", &self.bikou),
+            ],
+        ))
+    }
+}
+
+fn property(name: &str, value: impl Into<String>) -> Node {
+    Node::Property(Property::new_with_value(name, value.into()))
+}
+
+/// 列車の運転方向を表す列挙体
+#[derive(Debug, Default, PartialEq, Clone)]
+pub enum Houkou {
+    #[default]
+    Kudari,
+    Nobori,
+}
+impl Houkou {
+    pub fn from_str(value: &str) -> Result<Self, Error> {
+        match value {
+            "Kudari" => Ok(Self::Kudari),
+            "Nobori" => Ok(Self::Nobori),
+            _ => Err(Error::TodoError)
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        match &self {
+            Houkou::Kudari => "Kudari".to_string(),
+            Houkou::Nobori => "Nobori".to_string(),
+        }
     }
 }

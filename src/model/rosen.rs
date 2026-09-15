@@ -1,6 +1,6 @@
 use crate::{
     model::{dia::Dia, eki::Eki, error::Error, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
-    opt::node::Node,
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 路線を表す構造体
@@ -82,4 +82,22 @@ impl Rosen {
 
         Ok(result)
     }
+
+    pub(crate) fn to_node(&self) -> Node {
+        let mut values = vec![property("Rosenmei", &self.rosenmei)];
+        values.extend(self.eki.iter().map(Eki::to_node));
+        values.extend(self.ressyasyubetsu.iter().map(Ressyasyubetsu::to_node));
+        values.extend(self.dia.iter().map(Dia::to_node));
+        values.push(property("KitenJikoku", self.kiten_jikoku.to_oudia_string()));
+        values.push(property(
+            "DiagramDgrYZahyouKyoriDefault",
+            self.diagram_dgr_y_zahyou_kyori_default.to_string(),
+        ));
+        values.push(property("Comment", &self.comment));
+        Node::Directory(Directory::new_with_value("Rosen", values))
+    }
+}
+
+fn property(name: &str, value: impl Into<String>) -> Node {
+    Node::Property(Property::new_with_value(name, value.into()))
 }

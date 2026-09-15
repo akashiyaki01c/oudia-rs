@@ -25,7 +25,7 @@ impl FromStr for ColorProp {
 }
 impl ToString for ColorProp {
     fn to_string(&self) -> String {
-        format!("00{:X}{:X}{:X}", self.red, self.green, self.blue)
+        format!("00{:02X}{:02X}{:02X}", self.red, self.green, self.blue)
     }
 }
 
