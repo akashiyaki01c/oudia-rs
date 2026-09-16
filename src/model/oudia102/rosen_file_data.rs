@@ -20,15 +20,12 @@ impl RosenFileData {
         if let Node::Property(_) = node {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
-            for node in &dir.values {
-                println!("{},{:?}", node.get_name(), node.get_name().as_bytes());
-            }
-
             // FileType
-            if let Some(Node::Property(version)) = dir.find("FileType") {
-                if version.value != "OuDia.1.02" {
-                    return Err(Error::InvalidVersion)
-                }
+            let Some(Node::Property(version)) = dir.find("FileType") else {
+                return Err(Error::InvalidVersion);
+            };
+            if version.value != "OuDia.1.02" {
+                return Err(Error::InvalidVersion);
             }
 
             // Rosen
@@ -80,7 +77,11 @@ impl RosenFileData {
         let Node::Directory(root) = self.to_node() else {
             unreachable!();
         };
-        root.values.iter().map(serialize_node).collect()
+        root.values
+            .iter()
+            .map(serialize_node)
+            .collect::<Vec<_>>()
+            .join("\r\n")
     }
 
     /// OuDiaファイル用のShift-JISバイト列で書き出します。
@@ -114,7 +115,7 @@ mod tests {
 
     #[test]
     fn oudia_text_can_be_read_after_writing() {
-        let data = include_bytes!("../../../test_data/kto.oud");
+        let data = include_bytes!("../../../test_data/keio.oud");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
         let file =

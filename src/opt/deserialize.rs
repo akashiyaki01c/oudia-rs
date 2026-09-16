@@ -34,7 +34,6 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
     let first_line = iter.next().unwrap();
 
     if let Some(name) = first_line.strip_suffix(".") {
-        println!("[Directory] {} [/Directory]", first_line);
         // directory
         let mut nodes = vec![];
         let mut is_success = false;
@@ -42,7 +41,6 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
             if *next_line == "." {
                 is_success = true;
                 iter.next();
-                println!("end directory {}", name);
                 break;
             }
             if let Some(node) = deserialize_node_inner(iter)? {
@@ -58,7 +56,6 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
         ))))
     } else if first_line.contains("=") {
         // property
-        println!("{} [Property]", first_line);
         Ok(Some(Node::Property(deserialize_property(first_line))))
     } else {
         Ok(None)
@@ -69,10 +66,9 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
 fn test() {
     use crate::model::oudia102::rosen_file_data::RosenFileData;
 
-    let data = include_bytes!("../../test_data/kto.oud");
+    let data = include_bytes!("../../test_data/keio.oud");
     let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);
     let result = deserialize_node(&data).unwrap();
     let file =
         RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", result)));
-    println!("{:?}", file);
 }

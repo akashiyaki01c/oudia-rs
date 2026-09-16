@@ -106,7 +106,7 @@ impl DispProp {
 
             // DiaRessyajouhouHyoujiEkiOrderNobori
             if let Some(Node::Property(order)) = dir.find("DiaRessyajouhouHyoujiEkiOrderNobori") {
-                result.dia_ressyajouhou_hyouji_eki_order_kudari =
+                    result.dia_ressyajouhou_hyouji_eki_order_nobori =
                     order.value.parse().map_err(|_| Error::TodoError)?;
             }
         } else {
