@@ -97,30 +97,32 @@ impl Ressyasyubetsu {
     }
 
     pub(crate) fn to_node(&self) -> Node {
+        let mut values = vec![property("Syubetsumei", &self.syubetsumei)];
+        if !self.ryakusyou.is_empty() {
+            values.push(property("Ryakusyou", &self.ryakusyou));
+        }
+        values.extend([
+            property(
+                "JikokuhyouMojiColor",
+                self.jikokuhyou_moji_color.to_string(),
+            ),
+            property(
+                "JikokuhyouFontIndex",
+                self.jikokuhyou_font_index.to_string(),
+            ),
+            property("DiagramSenColor", self.diagram_sen_color.to_string()),
+            property("DiagramSenStyle", self.diagram_sen_style.to_oudia_string()),
+        ]);
+        if self.diagram_sen_is_bold {
+            values.push(property("DiagramSenIsBold", "1"));
+        }
+        values.push(property(
+            "StopMarkDrawType",
+            self.stop_mark_draw_type.to_oudia_string(),
+        ));
         Node::Directory(Directory::new_with_value(
             "Ressyasyubetsu",
-            vec![
-                property("Syubetsumei", &self.syubetsumei),
-                property("Ryakusyou", &self.ryakusyou),
-                property(
-                    "JikokuhyouMojiColor",
-                    self.jikokuhyou_moji_color.to_string(),
-                ),
-                property(
-                    "JikokuhyouFontIndex",
-                    self.jikokuhyou_font_index.to_string(),
-                ),
-                property("DiagramSenColor", self.diagram_sen_color.to_string()),
-                property("DiagramSenStyle", self.diagram_sen_style.to_oudia_string()),
-                property(
-                    "DiagramSenIsBold",
-                    if self.diagram_sen_is_bold { "1" } else { "0" },
-                ),
-                property(
-                    "StopMarkDrawType",
-                    self.stop_mark_draw_type.to_oudia_string(),
-                ),
-            ],
+            values,
         ))
     }
 }

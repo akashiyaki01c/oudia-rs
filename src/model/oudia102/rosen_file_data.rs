@@ -77,11 +77,17 @@ impl RosenFileData {
         let Node::Directory(root) = self.to_node() else {
             unreachable!();
         };
-        root.values
-            .iter()
-            .map(serialize_node)
-            .collect::<Vec<_>>()
-            .join("\r\n")
+        let mut result = String::new();
+        for node in &root.values {
+            if !result.is_empty() && !result.ends_with("\r\n") {
+                result.push_str("\r\n");
+            }
+            result.push_str(&serialize_node(node));
+            if !result.ends_with("\r\n") {
+                result.push_str("\r\n");
+            }
+        }
+        result
     }
 
     /// OuDiaファイル用のShift-JISバイト列で書き出します。
@@ -113,21 +119,89 @@ mod tests {
     use super::RosenFileData;
     use crate::opt::{deserialize::deserialize_node, directory::Directory, node::Node};
 
+    fn first_difference(left: &Node, right: &Node, path: &str) -> Option<String> {
+        match (left, right) {
+            (Node::Property(left), Node::Property(right)) => {
+                if left.name != right.name {
+                    return Some(format!("{path}.name: {:?} != {:?}", left.name, right.name));
+                }
+                if left.value != right.value {
+                    return Some(format!(
+                        "{path}.value: {:?} != {:?}",
+                        left.value, right.value
+                    ));
+                }
+            }
+            (Node::Directory(left), Node::Directory(right)) => {
+                if left.name != right.name {
+                    return Some(format!("{path}.name: {:?} != {:?}", left.name, right.name));
+                }
+                if left.values.len() != right.values.len() {
+                    return Some(format!(
+                        "{path}({}).len: {} != {}",
+                        left.name,
+                        left.values.len(),
+                        right.values.len()
+                    ));
+                }
+                for (index, (left, right)) in left.values.iter().zip(&right.values).enumerate() {
+                    if let Some(difference) = first_difference(left, right, &format!("{path}[{index}]")) {
+                        return Some(difference);
+                    }
+                }
+            }
+            _ => return Some(format!("{path}: node types differ")),
+        }
+        None
+    }
+
     #[test]
     fn oudia_text_can_be_read_after_writing() {
         let data = include_bytes!("../../../test_data/keio.oud");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
         let file =
-            RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", nodes)))
-                .unwrap();
+            RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
+                "ROOT",
+                nodes.clone(),
+            )))
+            .unwrap();
 
         let written = file.to_oudia_string();
+        if text != written {
+            let difference = text
+                .bytes()
+                .zip(written.bytes())
+                .position(|(left, right)| left != right)
+                .unwrap_or_else(|| text.len().min(written.len()));
+            let input_context: String = text
+                .chars()
+                .skip(difference.saturating_sub(20))
+                .take(40)
+                .collect();
+            let output_context: String = written
+                .chars()
+                .skip(difference.saturating_sub(20))
+                .take(40)
+                .collect();
+            panic!(
+                "serialized text differs at byte {difference}: input_len={}, output_len={}, input={input_context:?}, output={output_context:?}",
+                text.len(),
+                written.len(),
+            );
+        }
         let written_nodes = deserialize_node(&written).unwrap();
         RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
             "ROOT",
-            written_nodes,
+            written_nodes.clone(),
         )))
         .unwrap();
+        assert_eq!(nodes.len(), written_nodes.len());
+        for (index, (input, output)) in nodes.iter().zip(&written_nodes).enumerate() {
+            assert_eq!(
+                first_difference(input, output, &format!("root[{index}]")),
+                None
+            );
+        }
     }
 }

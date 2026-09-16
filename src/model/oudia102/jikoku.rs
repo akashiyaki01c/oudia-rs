@@ -86,9 +86,17 @@ impl Jikoku {
                 let minutes = total_seconds / 60 % 60;
                 let seconds = total_seconds % 60;
                 if seconds == 0 {
-                    format!("{hours:02}{minutes:02}")
+                    if hours < 10 {
+                        format!("{hours}{minutes:02}")
+                    } else {
+                        format!("{hours:02}{minutes:02}")
+                    }
                 } else {
-                    format!("{hours:02}{minutes:02}{seconds:02}")
+                    if hours < 10 {
+                        format!("{hours}{minutes:02}{seconds:02}")
+                    } else {
+                        format!("{hours:02}{minutes:02}{seconds:02}")
+                    }
                 }
             })
             .unwrap_or_default()

@@ -61,6 +61,8 @@ impl Ekijikoku {
         };
         if times.is_empty() && self.ekiatsukai == 0 {
             String::new()
+        } else if times.is_empty() {
+            self.ekiatsukai.to_string()
         } else {
             format!("{};{}", self.ekiatsukai, times)
         }

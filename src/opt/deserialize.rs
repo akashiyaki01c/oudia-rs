@@ -69,6 +69,6 @@ fn test() {
     let data = include_bytes!("../../test_data/keio.oud");
     let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);
     let result = deserialize_node(&data).unwrap();
-    let file =
+    let _file =
         RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", result)));
 }

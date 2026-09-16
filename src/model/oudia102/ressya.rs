@@ -78,24 +78,33 @@ impl Ressya {
     }
 
     pub(crate) fn to_node(&self) -> Node {
+        let mut values = vec![
+            property("Houkou", self.houkou.to_string()),
+            property("Syubetsu", self.ressyasyubetsu_index.to_string()),
+        ];
+        if !self.ressyabangou.is_empty() {
+            values.push(property("Ressyabangou", &self.ressyabangou));
+        }
+        if !self.ressyamei.is_empty() {
+            values.push(property("Ressyamei", &self.ressyamei));
+        }
+        if !self.gousuu.is_empty() {
+            values.push(property("Gousuu", &self.gousuu));
+        }
+        values.push(property(
+            "EkiJikoku",
+            self.ekijikoku
+                .iter()
+                .map(Ekijikoku::to_oudia_string)
+                .collect::<Vec<_>>()
+                .join(","),
+        ));
+        if !self.bikou.is_empty() {
+            values.push(property("Bikou", &self.bikou));
+        }
         Node::Directory(Directory::new_with_value(
             "Ressya",
-            vec![
-                property("Houkou", self.houkou.to_string()),
-                property("Syubetsu", self.ressyasyubetsu_index.to_string()),
-                property("Ressyabangou", &self.ressyabangou),
-                property("Ressyamei", &self.ressyamei),
-                property("Gosuu", &self.gousuu),
-                property(
-                    "EkiJikoku",
-                    self.ekijikoku
-                        .iter()
-                        .map(Ekijikoku::to_oudia_string)
-                        .collect::<Vec<_>>()
-                        .join(","),
-                ),
-                property("Bikou", &self.bikou),
-            ],
+            values,
         ))
     }
 }

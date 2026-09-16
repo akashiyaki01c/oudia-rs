@@ -137,14 +137,6 @@ impl DispProp {
                 "JikokuhyouRessyaWidth",
                 self.jikokuhyou_ressya_width.to_string(),
             ),
-            property(
-                "DiaRessyajouhouHyoujiEkiOrderKudari",
-                self.dia_ressyajouhou_hyouji_eki_order_kudari.to_string(),
-            ),
-            property(
-                "DiaRessyajouhouHyoujiEkiOrderNobori",
-                self.dia_ressyajouhou_hyouji_eki_order_nobori.to_string(),
-            ),
         ]);
         Node::Directory(Directory::new_with_value("DispProp", values))
     }

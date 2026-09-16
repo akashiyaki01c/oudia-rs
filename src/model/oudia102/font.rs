@@ -79,17 +79,38 @@ impl FontProp {
     }
 
     pub fn to_oudia_string(&self) -> String {
-        format!(
-            "PointTextHeight={};LogicalunitTextHeight={};LogicalunitCellHeight={};Facename={};Bold={};Itaric={};Underline={};StrikeOut={};Escapement={}",
-            self.point_text_height,
-            self.logicalunit_text_height,
-            self.logicalunit_cell_height,
-            self.facename,
-            self.bold as u8,
-            self.itaric as u8,
-            self.underine as u8,
-            self.strike_out as u8,
-            self.escapement,
-        )
+        let mut values = Vec::new();
+        if self.point_text_height != 0 {
+            values.push(format!("PointTextHeight={}", self.point_text_height));
+        }
+        if self.logicalunit_text_height != 0 {
+            values.push(format!(
+                "LogicalunitTextHeight={}",
+                self.logicalunit_text_height
+            ));
+        }
+        if self.logicalunit_cell_height != 0 {
+            values.push(format!(
+                "LogicalunitCellHeight={}",
+                self.logicalunit_cell_height
+            ));
+        }
+        values.push(format!("Facename={}", self.facename));
+        if self.bold {
+            values.push("Bold=1".to_string());
+        }
+        if self.itaric {
+            values.push("Itaric=1".to_string());
+        }
+        if self.underine {
+            values.push("Underline=1".to_string());
+        }
+        if self.strike_out {
+            values.push("StrikeOut=1".to_string());
+        }
+        if self.escapement != 0 {
+            values.push(format!("Escapement={}", self.escapement));
+        }
+        values.join(";")
     }
 }

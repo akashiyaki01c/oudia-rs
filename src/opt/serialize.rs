@@ -11,8 +11,11 @@ pub fn serialize_node(node: &Node) -> String {
             let mut result = String::new();
             result += &format!("{}.\r\n", escape_text(directory.name.clone()));
             for node in &directory.values {
-                result += &serialize_node(node);
-                result += "\r\n";
+                let serialized = serialize_node(node);
+                result += &serialized;
+                if !serialized.ends_with("\r\n") {
+                    result += "\r\n";
+                }
             }
             result += ".\r\n";
             result

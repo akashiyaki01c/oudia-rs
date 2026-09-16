@@ -81,22 +81,35 @@ impl Eki {
     }
 
     pub(crate) fn to_node(&self) -> Node {
+        let mut values = vec![
+            property("Ekimei", &self.ekimei),
+            property("Ekijikokukeisiki", self.ekijikokukeisiki.to_oudia_string()),
+            property("Ekikibo", self.ekikibo.to_oudia_string()),
+        ];
+        if self.kyoukaisen {
+            values.push(property("Kyoukaisen", "1"));
+        }
+        if !matches!(
+            self.diagram_ressyajouhou_hyouji_kudari,
+            DiagramRessyajouhouHyouji::Origin
+        ) {
+            values.push(property(
+                "DiagramRessyajouhouHyoujiKudari",
+                self.diagram_ressyajouhou_hyouji_kudari.to_oudia_string(),
+            ));
+        }
+        if !matches!(
+            self.diagram_ressyajouhou_hyouji_nobori,
+            DiagramRessyajouhouHyouji::Origin
+        ) {
+            values.push(property(
+                "DiagramRessyajouhouHyoujiNobori",
+                self.diagram_ressyajouhou_hyouji_nobori.to_oudia_string(),
+            ));
+        }
         Node::Directory(Directory::new_with_value(
             "Eki",
-            vec![
-                property("Ekimei", &self.ekimei),
-                property("Ekijikokukeisiki", self.ekijikokukeisiki.to_oudia_string()),
-                property("Ekikibo", self.ekikibo.to_oudia_string()),
-                property("Kyoukaisen", if self.kyoukaisen { "1" } else { "0" }),
-                property(
-                    "DiagramRessyajouhouHyoujiKudari",
-                    self.diagram_ressyajouhou_hyouji_kudari.to_oudia_string(),
-                ),
-                property(
-                    "DiagramRessyajouhouHyoujiNobori",
-                    self.diagram_ressyajouhou_hyouji_nobori.to_oudia_string(),
-                ),
-            ],
+            values,
         ))
     }
 }
