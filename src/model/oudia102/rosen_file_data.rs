@@ -24,6 +24,13 @@ impl RosenFileData {
                 println!("{},{:?}", node.get_name(), node.get_name().as_bytes());
             }
 
+            // FileType
+            if let Some(Node::Property(version)) = dir.find("FileType") {
+                if version.value != "OuDia.1.02" {
+                    return Err(Error::InvalidVersion)
+                }
+            }
+
             // Rosen
             if let Some(rosen) = dir.find("Rosen") {
                 result.rosen = Rosen::from_node(rosen)?;
@@ -54,6 +61,10 @@ impl RosenFileData {
         Node::Directory(Directory::new_with_value(
             "ROOT",
             vec![
+                Node::Property(Property::new_with_value(
+                    "FileType",
+                    "OuDia.1.02".to_string(),
+                )),
                 self.rosen.to_node(),
                 self.disp_prop.to_node(),
                 Node::Property(Property::new_with_value(

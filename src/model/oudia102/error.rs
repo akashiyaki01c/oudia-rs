@@ -5,6 +5,8 @@ use thiserror::Error;
 pub enum Error {
     #[error("Node type is different")]
     NodeTypeError,
+    #[error("version is invalid")]
+    InvalidVersion,
 
     #[error("Rosen is not found")]
     RosenIsNotFound,

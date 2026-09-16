@@ -70,7 +70,7 @@ impl Eki {
             if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiNobori")
                 && let Node::Property(hyouji) = hyouji
             {
-                result.diagram_ressyajouhou_hyouji_kudari =
+                result.diagram_ressyajouhou_hyouji_nobori =
                     DiagramRessyajouhouHyouji::from_str(&hyouji.value)?;
             }
         } else {

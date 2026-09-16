@@ -34,7 +34,7 @@ impl DispProp {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // JikokuhyouFont
-            for (i, font) in dir.find_all("DiaName").iter().enumerate() {
+            for (i, font) in dir.find_all("JikokuhyouFont").iter().enumerate() {
                 if let Node::Property(font) = font
                     && let Some(v) = result.jikokuhyou_font.get_mut(i)
                 {
@@ -97,6 +97,18 @@ impl DispProp {
                 result.jikokuhyou_ressya_width =
                     font.value.parse().map_err(|_| Error::TodoError)?;
             }
+
+            // DiaRessyajouhouHyoujiEkiOrderKudari
+            if let Some(Node::Property(order)) = dir.find("DiaRessyajouhouHyoujiEkiOrderKudari") {
+                result.dia_ressyajouhou_hyouji_eki_order_kudari =
+                    order.value.parse().map_err(|_| Error::TodoError)?;
+            }
+
+            // DiaRessyajouhouHyoujiEkiOrderNobori
+            if let Some(Node::Property(order)) = dir.find("DiaRessyajouhouHyoujiEkiOrderNobori") {
+                result.dia_ressyajouhou_hyouji_eki_order_kudari =
+                    order.value.parse().map_err(|_| Error::TodoError)?;
+            }
         } else {
             unreachable!()
         }
@@ -108,7 +120,7 @@ impl DispProp {
         let mut values = self
             .jikokuhyou_font
             .iter()
-            .map(|font| property("DiaName", font.to_oudia_string()))
+            .map(|font| property("JikokuhyouFont", font.to_oudia_string()))
             .collect::<Vec<_>>();
         values.extend([
             property("JikokuhyouVFont", self.jikokuhyou_v_font.to_oudia_string()),
@@ -124,6 +136,14 @@ impl DispProp {
             property(
                 "JikokuhyouRessyaWidth",
                 self.jikokuhyou_ressya_width.to_string(),
+            ),
+            property(
+                "DiaRessyajouhouHyoujiEkiOrderKudari",
+                self.dia_ressyajouhou_hyouji_eki_order_kudari.to_string(),
+            ),
+            property(
+                "DiaRessyajouhouHyoujiEkiOrderNobori",
+                self.dia_ressyajouhou_hyouji_eki_order_nobori.to_string(),
             ),
         ]);
         Node::Directory(Directory::new_with_value("DispProp", values))
