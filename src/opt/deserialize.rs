@@ -67,7 +67,7 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
 
 #[test]
 fn test() {
-    use crate::model::rosen_file_data::RosenFileData;
+    use crate::model::oudia102::rosen_file_data::RosenFileData;
 
     let data = include_bytes!("../../test_data/kto.oud");
     let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);

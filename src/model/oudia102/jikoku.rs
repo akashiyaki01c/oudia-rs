@@ -1,4 +1,4 @@
-use crate::model::error::Error;
+use crate::model::oudia102::error::Error;
 
 const TOTAL_SECONDS_PER_DAY: usize = 24 * 60 * 60;
 

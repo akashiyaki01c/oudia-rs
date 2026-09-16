@@ -1,4 +1,4 @@
-use crate::model::{error::Error, jikoku::Jikoku};
+use crate::model::oudia102::{error::Error, jikoku::Jikoku};
 use std::str::FromStr;
 
 /// 一つの駅時刻を表す構造体

@@ -1,6 +1,5 @@
 use crate::{
-    model::{error::Error, ressya::Ressya},
-    opt::{directory::Directory, node::Node, property::Property},
+    model::oudia102::{Error, Ressya}, opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 1つの時刻表を表す構造体

@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    model::{ekijikoku::Ekijikoku, error::Error},
+    model::oudia102::{ekijikoku::Ekijikoku, error::Error},
     opt::{directory::Directory, node::Node, property::Property},
 };
 

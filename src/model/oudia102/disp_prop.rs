@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    model::{color::ColorProp, error::Error, font::FontProp},
+    model::oudia102::{color::ColorProp, error::Error, font::FontProp},
     opt::{directory::Directory, node::Node, property::Property},
 };
 

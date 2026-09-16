@@ -1,5 +1,5 @@
 use crate::{
-    model::{disp_prop::DispProp, error::Error, rosen::Rosen},
+    model::oudia102::{disp_prop::DispProp, error::Error, rosen::Rosen},
     opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
 
@@ -82,8 +82,11 @@ impl RosenFileData {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum FileType {
+    /// `OuDia.2`
     OuDia02,
+    /// `OuDia.3`
     OuDia03,
+    /// `OuDia.5`
     OuDia05,
     /// `OuDia.6`
     OuDia06,
@@ -100,7 +103,7 @@ mod tests {
 
     #[test]
     fn oudia_text_can_be_read_after_writing() {
-        let data = include_bytes!("../../test_data/kto.oud");
+        let data = include_bytes!("../../../test_data/kto.oud");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
         let file =

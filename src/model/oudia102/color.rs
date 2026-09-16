@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::model::error::Error;
+use crate::model::oudia102::error::Error;
 
 /// 色をRGBの3色で表す構造体
 #[derive(Debug, Default, PartialEq, Clone, Copy, Eq)]

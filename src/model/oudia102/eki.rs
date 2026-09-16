@@ -1,5 +1,5 @@
 use crate::{
-    model::error::Error,
+    model::oudia102::error::Error,
     opt::{directory::Directory, node::Node, property::Property},
 };
 

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::model::error::Error;
+use crate::model::oudia102::error::Error;
 
 /// 1つのフォント設定を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]

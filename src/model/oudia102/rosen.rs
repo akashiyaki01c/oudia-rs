@@ -1,5 +1,5 @@
 use crate::{
-    model::{dia::Dia, eki::Eki, error::Error, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
+    model::oudia102::{dia::Dia, eki::Eki, error::Error, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
     opt::{directory::Directory, node::Node, property::Property},
 };
 
