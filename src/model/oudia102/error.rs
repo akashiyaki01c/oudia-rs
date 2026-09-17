@@ -7,11 +7,13 @@ pub enum Error {
     NodeTypeError,
     #[error("version is invalid")]
     InvalidVersion,
+    #[error("{0} is not found")]
+    KeyIsNotFound(String),
+    #[error("property {0} is invalid value \"{1}\"")]
+    InvalidValue(String, String),
+    #[error("value of \"{0}\" is empty")]
+    EmptyValue(String),
 
-    #[error("Rosen is not found")]
-    RosenIsNotFound,
-    #[error("DispProp is not found")]
-    DispPropIsNotFound,
     #[error("DiagramDgrYZahyouKyoriDefault")]
     DiagramDgrYZahyouKyoriDefaultError,
 

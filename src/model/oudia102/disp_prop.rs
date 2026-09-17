@@ -34,6 +34,9 @@ impl DispProp {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // JikokuhyouFont
+            if dir.find_all("JikokuhyouFont").is_empty() {
+                return Err(Error::KeyIsNotFound("JikokukyouFont".to_string()))
+            }
             for (i, font) in dir.find_all("JikokuhyouFont").iter().enumerate() {
                 if let Node::Property(font) = font
                     && let Some(v) = result.jikokuhyou_font.get_mut(i)

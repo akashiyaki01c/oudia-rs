@@ -47,7 +47,12 @@ impl FontProp {
 
         // Facename
         if let Some(prop) = connected_string.get("Facename") {
+            if prop.is_empty() {
+                return Err(Error::EmptyValue("Facename".to_string()));
+            }
             result.facename = prop.to_string();
+        } else {
+            return Err(Error::KeyIsNotFound("Facename".to_string()));
         }
 
         // Bold

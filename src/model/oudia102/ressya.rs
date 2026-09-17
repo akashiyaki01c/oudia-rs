@@ -33,6 +33,9 @@ impl Ressya {
             // Houkou
             if let Some(Node::Property(houkou)) = dir.find("Houkou") {
                 result.houkou = Houkou::from_str(&houkou.value)?;
+            } else {
+                result.houkou = Houkou::Null;
+                return Ok(result);
             }
 
             // Syubetsu
@@ -78,6 +81,9 @@ impl Ressya {
     }
 
     pub(crate) fn to_node(&self) -> Node {
+        if self.houkou == Houkou::Null {
+            return Node::Directory(Directory::new_with_value("Ressya", vec![]));
+        }
         let mut values = vec![
             property("Houkou", self.houkou.to_string()),
             property("Syubetsu", self.ressyasyubetsu_index.to_string()),
@@ -102,10 +108,7 @@ impl Ressya {
         if !self.bikou.is_empty() {
             values.push(property("Bikou", &self.bikou));
         }
-        Node::Directory(Directory::new_with_value(
-            "Ressya",
-            values,
-        ))
+        Node::Directory(Directory::new_with_value("Ressya", values))
     }
 }
 
@@ -119,13 +122,14 @@ pub enum Houkou {
     #[default]
     Kudari,
     Nobori,
+    Null,
 }
 impl Houkou {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
             "Kudari" => Ok(Self::Kudari),
             "Nobori" => Ok(Self::Nobori),
-            _ => Err(Error::TodoError)
+            _ => Err(Error::TodoError),
         }
     }
 
@@ -133,6 +137,7 @@ impl Houkou {
         match &self {
             Houkou::Kudari => "Kudari".to_string(),
             Houkou::Nobori => "Nobori".to_string(),
+            Houkou::Null => unreachable!(),
         }
     }
 }

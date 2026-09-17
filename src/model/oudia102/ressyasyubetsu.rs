@@ -35,10 +35,18 @@ impl Ressyasyubetsu {
             // Syubetsumei
             if let Some(syubetsumei) = dir.find("Syubetsumei") {
                 if let Node::Property(syubetsumei) = syubetsumei {
+                    if syubetsumei.value.is_empty() {
+                        return Err(Error::InvalidValue(
+                            syubetsumei.name.to_string(),
+                            syubetsumei.value.to_string(),
+                        ));
+                    }
                     result.syubetsumei = syubetsumei.value.clone();
+                } else {
+                    return Err(Error::NodeTypeError);
                 }
             } else {
-                todo!();
+                return Err(Error::KeyIsNotFound("Syubetsumei".to_string()));
             }
 
             // Ryakusyou
@@ -120,10 +128,7 @@ impl Ressyasyubetsu {
             "StopMarkDrawType",
             self.stop_mark_draw_type.to_oudia_string(),
         ));
-        Node::Directory(Directory::new_with_value(
-            "Ressyasyubetsu",
-            values,
-        ))
+        Node::Directory(Directory::new_with_value("Ressyasyubetsu", values))
     }
 }
 
@@ -147,6 +152,7 @@ pub enum SenStype {
 impl SenStype {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
+            "" => Err(Error::TodoError),
             "SenStyle_Jissen" => Ok(Self::Jissen),
             "SenStyle_Hasen" => Ok(Self::Hasen),
             "SenStyle_Tensen" => Ok(Self::Tensen),
@@ -176,6 +182,7 @@ pub enum StopMarkDrawType {
 impl StopMarkDrawType {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
+            "" => Err(Error::TodoError),
             "EStopMarkDrawType_DrawOnStop" => Ok(Self::DrawOnStop),
             "EStopMarkDrawType_Nothing" => Ok(Self::Nothing),
             "EStopMarkDrawType_DrawOnPass" => Ok(Self::DrawOnPass),

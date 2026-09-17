@@ -32,14 +32,14 @@ impl RosenFileData {
             if let Some(rosen) = dir.find("Rosen") {
                 result.rosen = Rosen::from_node(rosen)?;
             } else {
-                return Err(Error::RosenIsNotFound);
+                return Err(Error::KeyIsNotFound("Rosen".to_string()));
             }
 
             // DispProp
             if let Some(disp_prop) = dir.find("DispProp") {
                 result.disp_prop = DispProp::from_node(disp_prop)?;
             } else {
-                return Err(Error::RosenIsNotFound);
+                return Err(Error::KeyIsNotFound("DispProp".to_string()));
             }
 
             // FileTypeAppComment

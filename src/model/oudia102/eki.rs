@@ -30,7 +30,7 @@ impl Eki {
                     result.ekimei = ekimei.value.clone();
                 }
             } else {
-                todo!();
+                return Err(Error::KeyIsNotFound("Ekimei".to_string()))
             }
 
             // Ekijikokukeisiki
@@ -38,8 +38,6 @@ impl Eki {
                 if let Node::Property(ekimei) = ekimei {
                     result.ekijikokukeisiki = Ekijikokukeisiki::from_str(&ekimei.value)?;
                 }
-            } else {
-                todo!();
             }
 
             // Ekikibo
@@ -47,8 +45,6 @@ impl Eki {
                 if let Node::Property(ekikibo) = ekikibo {
                     result.ekikibo = Ekikibo::from_str(&ekikibo.value)?;
                 }
-            } else {
-                todo!();
             }
 
             // Kyoukaisen
@@ -134,6 +130,7 @@ pub enum Ekijikokukeisiki {
 impl Ekijikokukeisiki {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
+            "" => Err(Error::TodoError),
             "Jikokukeisiki_Hatsu" => Ok(Self::Hatsu),
             "Jikokukeisiki_Hatsuchaku" => Ok(Self::Hatsuchaku),
             "Jikokukeisiki_KudariChaku" => Ok(Self::KudariChaku),
@@ -164,6 +161,7 @@ pub enum Ekikibo {
 impl Ekikibo {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
+            "" => Err(Error::TodoError),
             "Ekikibo_Ippan" => Ok(Self::Ippan),
             "Ekikibo_Syuyou" => Ok(Self::Syuyou),
             _ => Err(Error::TodoError),
