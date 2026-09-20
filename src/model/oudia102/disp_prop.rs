@@ -1,7 +1,10 @@
 use std::str::FromStr;
 
 use crate::{
-    model::oudia102::{color::ColorProp, error::Error, font::FontProp},
+    model::{
+        error::Error,
+        oudia102::{color::ColorProp, font::FontProp},
+    },
     opt::{directory::Directory, node::Node, property::Property},
 };
 
@@ -108,13 +111,19 @@ impl DisplayProperties {
 
             // EkimeiLength
             if let Some(Node::Property(font)) = dir.find(KEY_EKIMEI_LENGTH) {
-                result.ekimei_length = font.value.parse().map_err(|_| Error::TodoError)?;
+                result.ekimei_length = font.value.parse().map_err(|_| Error::InvalidNumber {
+                    field: KEY_EKIMEI_LENGTH.to_string(),
+                    value: font.value.to_string(),
+                })?;
             }
 
             // JikokuhyouRessyaWidth
             if let Some(Node::Property(font)) = dir.find(KEY_JIKOKUHYOU_RESSYA_WIDTH) {
                 result.jikokuhyou_ressya_width =
-                    font.value.parse().map_err(|_| Error::TodoError)?;
+                    font.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_JIKOKUHYOU_RESSYA_WIDTH.to_string(),
+                        value: font.value.to_string(),
+                    })?;
             }
 
             // DiaRessyajouhouHyoujiEkiOrderKudari
@@ -122,7 +131,10 @@ impl DisplayProperties {
                 dir.find(KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_KUDARI)
             {
                 result.dia_ressyajouhou_hyouji_eki_order_kudari =
-                    order.value.parse().map_err(|_| Error::TodoError)?;
+                    order.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_KUDARI.to_string(),
+                        value: order.value.to_string(),
+                    })?;
             }
 
             // DiaRessyajouhouHyoujiEkiOrderNobori
@@ -130,7 +142,10 @@ impl DisplayProperties {
                 dir.find(KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_NOBORI)
             {
                 result.dia_ressyajouhou_hyouji_eki_order_nobori =
-                    order.value.parse().map_err(|_| Error::TodoError)?;
+                    order.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_NOBORI.to_string(),
+                        value: order.value.to_string(),
+                    })?;
             }
         } else {
             unreachable!()

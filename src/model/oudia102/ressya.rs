@@ -1,8 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    model::oudia102::{ekijikoku::Ekijikoku, error::Error},
-    opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudia102::ekijikoku::Ekijikoku}, opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_RESSYA: &str = "Ressya";
@@ -50,7 +49,10 @@ impl Ressya {
             // Syubetsu
             if let Some(Node::Property(syubetsu)) = dir.find(KEY_SYUBETSU) {
                 result.ressyasyubetsu_index =
-                    syubetsu.value.parse().map_err(|_| Error::TodoError)?;
+                    syubetsu.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_SYUBETSU.to_string(),
+                        value: syubetsu.value.to_string(),
+                    })?;
             }
 
             // Ressyabangou
@@ -141,7 +143,10 @@ impl Houkou {
         match value {
             KEY_KUDARI => Ok(Self::Kudari),
             KEY_NOBORI => Ok(Self::Nobori),
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidEnum {
+                field: "Houkou".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 

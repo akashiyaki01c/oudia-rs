@@ -1,5 +1,5 @@
 use crate::{
-    model::oudia102::error::Error,
+    model::error::Error,
     opt::{directory::Directory, node::Node, property::Property},
 };
 
@@ -143,12 +143,18 @@ impl Ekijikokukeisiki {
 
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
-            "" => Err(Error::TodoError),
+            "" => Err(Error::InvalidEnum {
+                field: "Jikokukeisiki".to_string(),
+                value: value.to_string(),
+            }),
             Self::KEY_HATSU => Ok(Self::DepartureOnly),
             Self::KEY_HATSUCHAKU => Ok(Self::DepartureAndArrival),
             Self::KEY_KUDARI_CHAKU => Ok(Self::OutboundArrival),
             Self::KEY_NOBORI_CHAKU => Ok(Self::InboundArrival),
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidEnum {
+                field: "Jikokukeisiki".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 
@@ -174,10 +180,16 @@ pub enum StationScale {
 impl StationScale {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
-            "" => Err(Error::TodoError),
+            "" => Err(Error::InvalidEnum {
+                field: "Ekikibo".to_string(),
+                value: value.to_string(),
+            }),
             "Ekikibo_Ippan" => Ok(Self::Normal),
             "Ekikibo_Syuyou" => Ok(Self::Terminal),
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidEnum {
+                field: "Ekikibo".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 
@@ -202,7 +214,10 @@ impl DiagramRessyajouhouHyouji {
             "" => Ok(Self::Origin),
             "DiagramRessyajouhouHyouji_Anytime" => Ok(Self::Anytime),
             "DiagramRessyajouhouHyouji_Not" => Ok(Self::Not),
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidEnum {
+                field: "DiagramRessyajouhouHyouji".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 

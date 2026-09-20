@@ -1,6 +1,5 @@
 use crate::{
-    model::oudia102::{Error, Ressya},
-    opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudia102::Ressya}, opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_DIA: &str = "Dia";
@@ -41,7 +40,7 @@ impl Dia {
             // Kudari
             if let Some(Node::Directory(kudari)) = dir.find(KEY_KUDARI) {
                 if !kudari.is_array() {
-                    return Err(Error::TodoError);
+                    return Err(Error::ExpectedArray(KEY_KUDARI.to_string()));
                 }
                 let kudari: Result<Vec<Ressya>, Error> =
                     kudari.values.iter().map(Ressya::from_node).collect();
@@ -53,7 +52,7 @@ impl Dia {
             // Nobori
             if let Some(Node::Directory(nobori)) = dir.find(KEY_NOBORI) {
                 if !nobori.is_array() {
-                    return Err(Error::TodoError);
+                    return Err(Error::ExpectedArray(KEY_NOBORI.to_string()));
                 }
                 let nobori: Result<Vec<Ressya>, Error> =
                     nobori.values.iter().map(Ressya::from_node).collect();

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::model::oudia102::error::Error;
+use crate::model::error::Error;
 
 const KEY_POINT_TEXT_HEIGHT: &str = "PointTextHeight";
 const KEY_LOGICALUNIT_TEXT_HEIGHT: &str = "LogicalunitTextHeight";
@@ -31,10 +31,15 @@ impl FontProp {
             .split(";")
             .map(|v| {
                 let mut a = v.split("=");
-                Ok::<(&str, &str), Error>((
-                    a.next().ok_or(Error::TodoError)?,
-                    a.next().ok_or(Error::TodoError)?,
-                ))
+                let key = a.next().ok_or_else(|| Error::InvalidFormat {
+                    context: "font property".to_string(),
+                    value: v.to_string(),
+                })?;
+                let value = a.next().ok_or_else(|| Error::InvalidFormat {
+                    context: "font property".to_string(),
+                    value: v.to_string(),
+                })?;
+                Ok::<(&str, &str), Error>((key, value))
             })
             .collect::<Result<_, _>>()?;
 
@@ -42,17 +47,26 @@ impl FontProp {
 
         // PointTextHeight
         if let Some(prop) = connected_string.get(KEY_POINT_TEXT_HEIGHT) {
-            result.point_text_height = prop.parse().map_err(|_| Error::TodoError)?;
+            result.point_text_height = prop.parse().map_err(|_| Error::InvalidNumber {
+                field: KEY_POINT_TEXT_HEIGHT.to_string(),
+                value: prop.to_string(),
+            })?;
         }
 
         // LogicalunitTextHeight
         if let Some(prop) = connected_string.get(KEY_LOGICALUNIT_TEXT_HEIGHT) {
-            result.logicalunit_text_height = prop.parse().map_err(|_| Error::TodoError)?;
+            result.logicalunit_text_height = prop.parse().map_err(|_| Error::InvalidNumber {
+                field: KEY_LOGICALUNIT_TEXT_HEIGHT.to_string(),
+                value: prop.to_string(),
+            })?;
         }
 
         // LogicalunitCellHeight
         if let Some(prop) = connected_string.get(KEY_LOGICALUNIT_CELL_HEIGHT) {
-            result.logicalunit_cell_height = prop.parse().map_err(|_| Error::TodoError)?;
+            result.logicalunit_cell_height = prop.parse().map_err(|_| Error::InvalidNumber {
+                field: KEY_LOGICALUNIT_CELL_HEIGHT.to_string(),
+                value: prop.to_string(),
+            })?;
         }
 
         // Facename
@@ -87,7 +101,10 @@ impl FontProp {
 
         // Escapement
         if let Some(prop) = connected_string.get(KEY_ESCAPEMENT) {
-            result.escapement = prop.parse().map_err(|_| Error::TodoError)?;
+            result.escapement = prop.parse().map_err(|_| Error::InvalidNumber {
+                field: KEY_ESCAPEMENT.to_string(),
+                value: prop.to_string(),
+            })?;
         }
 
         Ok(result)

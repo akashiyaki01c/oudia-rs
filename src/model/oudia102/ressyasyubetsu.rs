@@ -1,8 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    model::oudia102::{color::ColorProp, error::Error},
-    opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudia102::color::ColorProp}, opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_RESSYASYUBETSU: &str = "Ressyasyubetsu";
@@ -77,7 +76,10 @@ impl Ressyasyubetsu {
             if let Some(index) = dir.find(KEY_JIKOKUHYOU_FONT_INDEX)
                 && let Node::Property(index) = index
             {
-                result.jikokuhyou_font_index = index.value.parse().map_err(|_| Error::TodoError)?;
+                result.jikokuhyou_font_index = index.value.parse().map_err(|_| Error::InvalidNumber {
+                    field: KEY_JIKOKUHYOU_FONT_INDEX.to_string(),
+                    value: index.value.to_string(),
+                })?;
             }
 
             // DiagramSenColor
@@ -170,12 +172,18 @@ impl SenStype {
 
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
-            "" => Err(Error::TodoError),
+            "" => Err(Error::InvalidEnum {
+                field: "SenStyle".to_string(),
+                value: value.to_string(),
+            }),
             Self::KEY_JISSEN => Ok(Self::Jissen),
             Self::KEY_HASEN => Ok(Self::Hasen),
             Self::KEY_TENSEN => Ok(Self::Tensen),
             Self::KEY_ITTENSASEN => Ok(Self::Ittensasen),
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidEnum {
+                field: "SenStyle".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 
@@ -204,11 +212,17 @@ impl StopMarkDrawType {
 
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
-            "" => Err(Error::TodoError),
+            "" => Err(Error::InvalidEnum {
+                field: "EStopMarkDrawType".to_string(),
+                value: value.to_string(),
+            }),
             Self::KEY_DRAW_ON_STOP => Ok(Self::DrawOnStop),
             Self::KEY_NOTHING => Ok(Self::Nothing),
             Self::KEY_DRAW_ON_PASS => Ok(Self::DrawOnPass),
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidEnum {
+                field: "EStopMarkDrawType".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 

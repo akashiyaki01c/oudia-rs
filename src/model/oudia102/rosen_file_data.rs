@@ -1,6 +1,5 @@
 use crate::{
-    model::oudia102::{disp_prop::DisplayProperties, error::Error, rosen::Rosen},
-    opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
+    model::{error::Error, oudia102::{disp_prop::DisplayProperties, rosen::Rosen}}, opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
 
 /// 1つのOuDiaファイルを表す構造体

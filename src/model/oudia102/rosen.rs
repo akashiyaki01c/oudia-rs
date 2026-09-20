@@ -1,6 +1,5 @@
 use crate::{
-    model::oudia102::{dia::Dia, eki::Station, error::Error, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
-    opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudia102::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu}}, opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 路線を表す構造体
@@ -67,7 +66,10 @@ impl Rosen {
                 result.diagram_dgr_y_zahyou_kyori_default = zahyou_kyori
                     .value
                     .parse()
-                    .map_err(|_| Error::DiagramDgrYZahyouKyoriDefaultError)?
+                    .map_err(|_| Error::InvalidNumber {
+                        field: "DiagramDgrYZahyouKyoriDefault".to_string(),
+                        value: zahyou_kyori.value.to_string(),
+                    })?
             }
 
             // Comment

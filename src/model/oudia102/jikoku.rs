@@ -1,4 +1,4 @@
-use crate::model::oudia102::error::Error;
+use crate::model::error::Error;
 
 const TOTAL_SECONDS_PER_DAY: usize = 24 * 60 * 60;
 
@@ -28,8 +28,14 @@ impl Jikoku {
                 let str_h = &value[0..1];
                 let str_m = &value[1..3];
 
-                let h: usize = str_h.parse().map_err(|_| Error::TodoError)?;
-                let m: usize = str_m.parse().map_err(|_| Error::TodoError)?;
+                let h: usize = str_h.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.hour".to_string(),
+                    value: str_h.to_string(),
+                })?;
+                let m: usize = str_m.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.minute".to_string(),
+                    value: str_m.to_string(),
+                })?;
 
                 Ok(Self {
                     total_seconds: Some(h * 60 * 60 + m * 60),
@@ -40,8 +46,14 @@ impl Jikoku {
                 let str_h = &value[0..2];
                 let str_m = &value[2..4];
 
-                let h: usize = str_h.parse().map_err(|_| Error::TodoError)?;
-                let m: usize = str_m.parse().map_err(|_| Error::TodoError)?;
+                let h: usize = str_h.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.hour".to_string(),
+                    value: str_h.to_string(),
+                })?;
+                let m: usize = str_m.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.minute".to_string(),
+                    value: str_m.to_string(),
+                })?;
 
                 Ok(Self {
                     total_seconds: Some(h * 60 * 60 + m * 60),
@@ -53,9 +65,18 @@ impl Jikoku {
                 let str_m = &value[1..3];
                 let str_s = &value[3..5];
 
-                let h: usize = str_h.parse().map_err(|_| Error::TodoError)?;
-                let m: usize = str_m.parse().map_err(|_| Error::TodoError)?;
-                let s: usize = str_s.parse().map_err(|_| Error::TodoError)?;
+                let h: usize = str_h.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.hour".to_string(),
+                    value: str_h.to_string(),
+                })?;
+                let m: usize = str_m.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.minute".to_string(),
+                    value: str_m.to_string(),
+                })?;
+                let s: usize = str_s.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.second".to_string(),
+                    value: str_s.to_string(),
+                })?;
 
                 Ok(Self {
                     total_seconds: Some(h * 60 * 60 + m * 60 + s),
@@ -67,15 +88,27 @@ impl Jikoku {
                 let str_m = &value[2..4];
                 let str_s = &value[4..6];
 
-                let h: usize = str_h.parse().map_err(|_| Error::TodoError)?;
-                let m: usize = str_m.parse().map_err(|_| Error::TodoError)?;
-                let s: usize = str_s.parse().map_err(|_| Error::TodoError)?;
+                let h: usize = str_h.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.hour".to_string(),
+                    value: str_h.to_string(),
+                })?;
+                let m: usize = str_m.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.minute".to_string(),
+                    value: str_m.to_string(),
+                })?;
+                let s: usize = str_s.parse().map_err(|_| Error::InvalidNumber {
+                    field: "Jikoku.second".to_string(),
+                    value: str_s.to_string(),
+                })?;
 
                 Ok(Self {
                     total_seconds: Some(h * 60 * 60 + m * 60 + s),
                 })
             }
-            _ => Err(Error::TodoError),
+            _ => Err(Error::InvalidFormat {
+                context: "Jikoku".to_string(),
+                value: value.to_string(),
+            }),
         }
     }
 

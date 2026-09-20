@@ -1,4 +1,4 @@
-use crate::model::oudia102::{error::Error, jikoku::Jikoku};
+use crate::model::{error::Error, oudia102::jikoku::Jikoku};
 use std::str::FromStr;
 
 /// 一つの駅時刻を表す構造体
@@ -37,7 +37,10 @@ impl FromStr for Ekijikoku {
         };
 
         Ok(Self {
-            ekiatsukai: str_ekiatsukai.parse().map_err(|_| Error::TodoError)?,
+            ekiatsukai: str_ekiatsukai.parse().map_err(|_| Error::InvalidNumber {
+                field: "EkiAtsukai".to_string(),
+                value: str_ekiatsukai.to_string(),
+            })?,
             chaku: Jikoku::from_str(str_chaku)?,
             hatsu: Jikoku::from_str(str_hatsu)?,
         })
