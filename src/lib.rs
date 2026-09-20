@@ -1,3 +1,6 @@
+pub mod io;
 pub mod model;
 pub mod opt;
-pub mod io;
+
+pub use io::deserialize_oudia;
+pub use io::serialize_oudia;
