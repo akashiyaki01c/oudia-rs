@@ -3,15 +3,20 @@ use crate::{
     opt::{directory::Directory, node::Node, property::Property},
 };
 
+const KEY_DIA: &str = "Dia";
+const KEY_DIA_NAME: &str = "DiaName";
+const KEY_KUDARI: &str = "Kudari";
+const KEY_NOBORI: &str = "Nobori";
+
 /// 1つの時刻表を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Dia {
     /// 時刻表名
-    dia_name: String,
+    name: String,
     /// 下り列車のリスト
-    kudari: Vec<Ressya>,
+    outbound_trains: Vec<Ressya>,
     /// 上り列車のリスト
-    nobori: Vec<Ressya>,
+    inbound_trains: Vec<Ressya>,
 }
 impl Dia {
     pub fn from_node(node: &Node) -> Result<Self, Error> {
@@ -21,40 +26,40 @@ impl Dia {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // DiaName [Required]
-            if let Some(Node::Property(dia_name)) = dir.find("DiaName") {
+            if let Some(Node::Property(dia_name)) = dir.find(KEY_DIA_NAME) {
                 if dia_name.value.is_empty() {
                     return Err(Error::InvalidValue(
                         dia_name.name.to_string(),
                         dia_name.value.to_string(),
                     ));
                 }
-                result.dia_name = dia_name.value.to_string();
+                result.name = dia_name.value.to_string();
             } else {
                 return Err(Error::KeyIsNotFound("DiaName".to_string()));
             }
 
             // Kudari
-            if let Some(Node::Directory(kudari)) = dir.find("Kudari") {
+            if let Some(Node::Directory(kudari)) = dir.find(KEY_KUDARI) {
                 if !kudari.is_array() {
                     return Err(Error::TodoError);
                 }
                 let kudari: Result<Vec<Ressya>, Error> =
                     kudari.values.iter().map(Ressya::from_node).collect();
-                result.kudari = kudari?;
+                result.outbound_trains = kudari?;
             } else {
-                return Err(Error::KeyIsNotFound("Kudari".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_KUDARI.to_string()));
             }
 
             // Nobori
-            if let Some(Node::Directory(nobori)) = dir.find("Nobori") {
+            if let Some(Node::Directory(nobori)) = dir.find(KEY_NOBORI) {
                 if !nobori.is_array() {
                     return Err(Error::TodoError);
                 }
                 let nobori: Result<Vec<Ressya>, Error> =
                     nobori.values.iter().map(Ressya::from_node).collect();
-                result.nobori = nobori?;
+                result.inbound_trains = nobori?;
             } else {
-                return Err(Error::KeyIsNotFound("Nobori".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_NOBORI.to_string()));
             }
         } else {
             unreachable!()
@@ -65,11 +70,11 @@ impl Dia {
 
     pub(crate) fn to_node(&self) -> Node {
         Node::Directory(Directory::new_with_value(
-            "Dia",
+            KEY_DIA,
             vec![
-                property("DiaName", &self.dia_name),
-                direction("Kudari", &self.kudari),
-                direction("Nobori", &self.nobori),
+                property(KEY_DIA_NAME, &self.name),
+                direction(KEY_KUDARI, &self.outbound_trains),
+                direction(KEY_NOBORI, &self.inbound_trains),
             ],
         ))
     }

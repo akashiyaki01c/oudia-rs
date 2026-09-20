@@ -5,12 +5,28 @@ use crate::{
     opt::{directory::Directory, node::Node, property::Property},
 };
 
+const KEY_DISP_PROP: &str = "DispProp";
+const KEY_JIKOKUHYOU_FONT: &str = "JikokuhyouFont";
+const KEY_JIKOKUHYOU_V_FONT: &str = "JikokuhyouVFont";
+const KEY_DIA_EKIMEI_FONT: &str = "DiaEkimeiFont";
+const KEY_DIA_JIKOKU_FONT: &str = "DiaJikokuFont";
+const KEY_DIA_RESSYA_FONT: &str = "DiaRessyaFont";
+const KEY_COMMENT_FONT: &str = "CommentFont";
+const KEY_DIA_MOJI_COLOR: &str = "DiaMojiColor";
+const KEY_DIA_HAIKEI_COLOR: &str = "DiaHaikeiColor";
+const KEY_DIA_RESSYA_COLOR: &str = "DiaRessyaColor";
+const KEY_DIA_JIKU_COLOR: &str = "DiaJikuColor";
+const KEY_EKIMEI_LENGTH: &str = "EkimeiLength";
+const KEY_JIKOKUHYOU_RESSYA_WIDTH: &str = "JikokuhyouRessyaWidth";
+const KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_KUDARI: &str = "DiaRessyajouhouHyoujiEkiOrderKudari";
+const KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_NOBORI: &str = "DiaRessyajouhouHyoujiEkiOrderNobori";
+
 /// 時刻表のフォント設定数
 const JIKOKUHYOUFONT_COUNT: usize = 8;
 
 /// ダイヤグラムファイルの表示設定を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
-pub struct DispProp {
+pub struct DisplayProperties {
     jikokuhyou_font: [FontProp; JIKOKUHYOUFONT_COUNT],
     jikokuhyou_v_font: FontProp,
     dia_ekimei_font: FontProp,
@@ -26,7 +42,7 @@ pub struct DispProp {
     dia_ressyajouhou_hyouji_eki_order_kudari: usize,
     dia_ressyajouhou_hyouji_eki_order_nobori: usize,
 }
-impl DispProp {
+impl DisplayProperties {
     pub fn from_node(node: &Node) -> Result<Self, Error> {
         let mut result = Self::default();
 
@@ -34,10 +50,10 @@ impl DispProp {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // JikokuhyouFont
-            if dir.find_all("JikokuhyouFont").is_empty() {
-                return Err(Error::KeyIsNotFound("JikokukyouFont".to_string()))
+            if dir.find_all(KEY_JIKOKUHYOU_FONT).is_empty() {
+                return Err(Error::KeyIsNotFound(KEY_JIKOKUHYOU_FONT.to_string()));
             }
-            for (i, font) in dir.find_all("JikokuhyouFont").iter().enumerate() {
+            for (i, font) in dir.find_all(KEY_JIKOKUHYOU_FONT).iter().enumerate() {
                 if let Node::Property(font) = font
                     && let Some(v) = result.jikokuhyou_font.get_mut(i)
                 {
@@ -46,70 +62,74 @@ impl DispProp {
             }
 
             // JikokuhyouVFont
-            if let Some(Node::Property(font)) = dir.find("JikokuhyouVFont") {
+            if let Some(Node::Property(font)) = dir.find(KEY_JIKOKUHYOU_V_FONT) {
                 result.jikokuhyou_v_font = FontProp::from_str(&font.value)?;
             }
 
             // DiaEkimeiFont
-            if let Some(Node::Property(font)) = dir.find("DiaEkimeiFont") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_EKIMEI_FONT) {
                 result.dia_ekimei_font = FontProp::from_str(&font.value)?;
             }
 
             // DiaJikokuFont
-            if let Some(Node::Property(font)) = dir.find("DiaJikokuFont") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_JIKOKU_FONT) {
                 result.dia_jikoku_font = FontProp::from_str(&font.value)?;
             }
 
             // DiaRessyaFont
-            if let Some(Node::Property(font)) = dir.find("DiaRessyaFont") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_RESSYA_FONT) {
                 result.dia_ressya_font = FontProp::from_str(&font.value)?;
             }
 
             // CommentFont
-            if let Some(Node::Property(font)) = dir.find("CommentFont") {
+            if let Some(Node::Property(font)) = dir.find(KEY_COMMENT_FONT) {
                 result.comment_font = FontProp::from_str(&font.value)?;
             }
 
             // DiaMojiColor
-            if let Some(Node::Property(font)) = dir.find("DiaMojiColor") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_MOJI_COLOR) {
                 result.dia_moji_color = ColorProp::from_str(&font.value)?;
             }
 
             // DiaHaikeiColor
-            if let Some(Node::Property(font)) = dir.find("DiaHaikeiColor") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_HAIKEI_COLOR) {
                 result.dia_haikei_color = ColorProp::from_str(&font.value)?;
             }
 
             // DiaRessyaColor
-            if let Some(Node::Property(font)) = dir.find("DiaRessyaColor") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_RESSYA_COLOR) {
                 result.dia_ressya_color = ColorProp::from_str(&font.value)?;
             }
 
             // DiaJikuColor
-            if let Some(Node::Property(font)) = dir.find("DiaJikuColor") {
+            if let Some(Node::Property(font)) = dir.find(KEY_DIA_JIKU_COLOR) {
                 result.dia_jiku_color = ColorProp::from_str(&font.value)?;
             }
 
             // EkimeiLength
-            if let Some(Node::Property(font)) = dir.find("EkimeiLength") {
+            if let Some(Node::Property(font)) = dir.find(KEY_EKIMEI_LENGTH) {
                 result.ekimei_length = font.value.parse().map_err(|_| Error::TodoError)?;
             }
 
             // JikokuhyouRessyaWidth
-            if let Some(Node::Property(font)) = dir.find("JikokuhyouRessyaWidth") {
+            if let Some(Node::Property(font)) = dir.find(KEY_JIKOKUHYOU_RESSYA_WIDTH) {
                 result.jikokuhyou_ressya_width =
                     font.value.parse().map_err(|_| Error::TodoError)?;
             }
 
             // DiaRessyajouhouHyoujiEkiOrderKudari
-            if let Some(Node::Property(order)) = dir.find("DiaRessyajouhouHyoujiEkiOrderKudari") {
+            if let Some(Node::Property(order)) =
+                dir.find(KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_KUDARI)
+            {
                 result.dia_ressyajouhou_hyouji_eki_order_kudari =
                     order.value.parse().map_err(|_| Error::TodoError)?;
             }
 
             // DiaRessyajouhouHyoujiEkiOrderNobori
-            if let Some(Node::Property(order)) = dir.find("DiaRessyajouhouHyoujiEkiOrderNobori") {
-                    result.dia_ressyajouhou_hyouji_eki_order_nobori =
+            if let Some(Node::Property(order)) =
+                dir.find(KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_NOBORI)
+            {
+                result.dia_ressyajouhou_hyouji_eki_order_nobori =
                     order.value.parse().map_err(|_| Error::TodoError)?;
             }
         } else {
@@ -123,25 +143,28 @@ impl DispProp {
         let mut values = self
             .jikokuhyou_font
             .iter()
-            .map(|font| property("JikokuhyouFont", font.to_oudia_string()))
+            .map(|font| property(KEY_JIKOKUHYOU_FONT, font.to_oudia_string()))
             .collect::<Vec<_>>();
         values.extend([
-            property("JikokuhyouVFont", self.jikokuhyou_v_font.to_oudia_string()),
-            property("DiaEkimeiFont", self.dia_ekimei_font.to_oudia_string()),
-            property("DiaJikokuFont", self.dia_jikoku_font.to_oudia_string()),
-            property("DiaRessyaFont", self.dia_ressya_font.to_oudia_string()),
-            property("CommentFont", self.comment_font.to_oudia_string()),
-            property("DiaMojiColor", self.dia_moji_color.to_string()),
-            property("DiaHaikeiColor", self.dia_haikei_color.to_string()),
-            property("DiaRessyaColor", self.dia_ressya_color.to_string()),
-            property("DiaJikuColor", self.dia_jiku_color.to_string()),
-            property("EkimeiLength", self.ekimei_length.to_string()),
             property(
-                "JikokuhyouRessyaWidth",
+                KEY_JIKOKUHYOU_V_FONT,
+                self.jikokuhyou_v_font.to_oudia_string(),
+            ),
+            property(KEY_DIA_EKIMEI_FONT, self.dia_ekimei_font.to_oudia_string()),
+            property(KEY_DIA_JIKOKU_FONT, self.dia_jikoku_font.to_oudia_string()),
+            property(KEY_DIA_RESSYA_FONT, self.dia_ressya_font.to_oudia_string()),
+            property(KEY_COMMENT_FONT, self.comment_font.to_oudia_string()),
+            property(KEY_DIA_MOJI_COLOR, self.dia_moji_color.to_string()),
+            property(KEY_DIA_HAIKEI_COLOR, self.dia_haikei_color.to_string()),
+            property(KEY_DIA_RESSYA_COLOR, self.dia_ressya_color.to_string()),
+            property(KEY_DIA_JIKU_COLOR, self.dia_jiku_color.to_string()),
+            property(KEY_EKIMEI_LENGTH, self.ekimei_length.to_string()),
+            property(
+                KEY_JIKOKUHYOU_RESSYA_WIDTH,
                 self.jikokuhyou_ressya_width.to_string(),
             ),
         ]);
-        Node::Directory(Directory::new_with_value("DispProp", values))
+        Node::Directory(Directory::new_with_value(KEY_DISP_PROP, values))
     }
 }
 

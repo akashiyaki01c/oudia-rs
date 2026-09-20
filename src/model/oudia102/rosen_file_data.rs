@@ -1,5 +1,5 @@
 use crate::{
-    model::oudia102::{disp_prop::DispProp, error::Error, rosen::Rosen},
+    model::oudia102::{disp_prop::DisplayProperties, error::Error, rosen::Rosen},
     opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
 
@@ -9,7 +9,7 @@ pub struct RosenFileData {
     /// 路線
     rosen: Rosen,
     /// ダイヤグラムファイルの表示設定
-    disp_prop: DispProp,
+    disp_prop: DisplayProperties,
     /// 作成されたアプリ名
     file_type_app_comment: String,
 }
@@ -37,7 +37,7 @@ impl RosenFileData {
 
             // DispProp
             if let Some(disp_prop) = dir.find("DispProp") {
-                result.disp_prop = DispProp::from_node(disp_prop)?;
+                result.disp_prop = DisplayProperties::from_node(disp_prop)?;
             } else {
                 return Err(Error::KeyIsNotFound("DispProp".to_string()));
             }
@@ -176,13 +176,13 @@ mod tests {
                 .unwrap_or_else(|| text.len().min(written.len()));
             let input_context: String = text
                 .chars()
-                .skip(difference.saturating_sub(20))
-                .take(40)
+                .skip(difference.saturating_sub(40))
+                .take(80)
                 .collect();
             let output_context: String = written
                 .chars()
-                .skip(difference.saturating_sub(20))
-                .take(40)
+                .skip(difference.saturating_sub(40))
+                .take(80)
                 .collect();
             panic!(
                 "serialized text differs at byte {difference}: input_len={}, output_len={}, input={input_context:?}, output={output_context:?}",

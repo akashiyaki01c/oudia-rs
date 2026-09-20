@@ -5,6 +5,16 @@ use crate::{
     opt::{directory::Directory, node::Node, property::Property},
 };
 
+const KEY_RESSYASYUBETSU: &str = "Ressyasyubetsu";
+const KEY_SYUBETSUMEI: &str = "Syubetsumei";
+const KEY_RYAKUSYOU: &str = "Ryakusyou";
+const KEY_JIKOKUHYOU_MOJI_COLOR: &str = "JikokuhyouMojiColor";
+const KEY_JIKOKUHYOU_FONT_INDEX: &str = "JikokuhyouFontIndex";
+const KEY_DIAGRAM_SEN_COLOR: &str = "DiagramSenColor";
+const KEY_DIAGRAM_SEN_STYLE: &str = "DiagramSenStyle";
+const KEY_DIAGRAM_SEN_IS_BOLD: &str = "DiagramSenIsBold";
+const KEY_STOP_MARK_DRAW_TYPE: &str = "StopMarkDrawType";
+
 /// 1つの列車種別を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Ressyasyubetsu {
@@ -33,7 +43,7 @@ impl Ressyasyubetsu {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // Syubetsumei
-            if let Some(syubetsumei) = dir.find("Syubetsumei") {
+            if let Some(syubetsumei) = dir.find(KEY_SYUBETSUMEI) {
                 if let Node::Property(syubetsumei) = syubetsumei {
                     if syubetsumei.value.is_empty() {
                         return Err(Error::InvalidValue(
@@ -46,53 +56,53 @@ impl Ressyasyubetsu {
                     return Err(Error::NodeTypeError);
                 }
             } else {
-                return Err(Error::KeyIsNotFound("Syubetsumei".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_SYUBETSUMEI.to_string()));
             }
 
             // Ryakusyou
-            if let Some(ryakusyou) = dir.find("Ryakusyou")
+            if let Some(ryakusyou) = dir.find(KEY_RYAKUSYOU)
                 && let Node::Property(ryakusyou) = ryakusyou
             {
                 result.ryakusyou = ryakusyou.value.clone();
             }
 
             // JikokuhyouMojiColor
-            if let Some(color) = dir.find("JikokuhyouMojiColor")
+            if let Some(color) = dir.find(KEY_JIKOKUHYOU_MOJI_COLOR)
                 && let Node::Property(color) = color
             {
                 result.jikokuhyou_moji_color = ColorProp::from_str(&color.value)?;
             }
 
             // JikokuhyouFontIndex
-            if let Some(index) = dir.find("JikokuhyouFontIndex")
+            if let Some(index) = dir.find(KEY_JIKOKUHYOU_FONT_INDEX)
                 && let Node::Property(index) = index
             {
                 result.jikokuhyou_font_index = index.value.parse().map_err(|_| Error::TodoError)?;
             }
 
             // DiagramSenColor
-            if let Some(color) = dir.find("DiagramSenColor")
+            if let Some(color) = dir.find(KEY_DIAGRAM_SEN_COLOR)
                 && let Node::Property(color) = color
             {
                 result.diagram_sen_color = ColorProp::from_str(&color.value)?;
             }
 
             // DiagramSenStyle
-            if let Some(style) = dir.find("DiagramSenStyle")
+            if let Some(style) = dir.find(KEY_DIAGRAM_SEN_STYLE)
                 && let Node::Property(style) = style
             {
                 result.diagram_sen_style = SenStype::from_str(&style.value)?;
             }
 
             // DiagramSenIsBold
-            if let Some(style) = dir.find("DiagramSenIsBold")
+            if let Some(style) = dir.find(KEY_DIAGRAM_SEN_IS_BOLD)
                 && let Node::Property(style) = style
             {
                 result.diagram_sen_is_bold = style.value == "1";
             }
 
             // StopMarkDrawType
-            if let Some(style) = dir.find("StopMarkDrawType")
+            if let Some(style) = dir.find(KEY_STOP_MARK_DRAW_TYPE)
                 && let Node::Property(style) = style
             {
                 result.stop_mark_draw_type = StopMarkDrawType::from_str(&style.value)?;
@@ -105,30 +115,33 @@ impl Ressyasyubetsu {
     }
 
     pub(crate) fn to_node(&self) -> Node {
-        let mut values = vec![property("Syubetsumei", &self.syubetsumei)];
+        let mut values = vec![property(KEY_SYUBETSUMEI, &self.syubetsumei)];
         if !self.ryakusyou.is_empty() {
-            values.push(property("Ryakusyou", &self.ryakusyou));
+            values.push(property(KEY_RYAKUSYOU, &self.ryakusyou));
         }
         values.extend([
             property(
-                "JikokuhyouMojiColor",
+                KEY_JIKOKUHYOU_MOJI_COLOR,
                 self.jikokuhyou_moji_color.to_string(),
             ),
             property(
-                "JikokuhyouFontIndex",
+                KEY_JIKOKUHYOU_FONT_INDEX,
                 self.jikokuhyou_font_index.to_string(),
             ),
-            property("DiagramSenColor", self.diagram_sen_color.to_string()),
-            property("DiagramSenStyle", self.diagram_sen_style.to_oudia_string()),
+            property(KEY_DIAGRAM_SEN_COLOR, self.diagram_sen_color.to_string()),
+            property(
+                KEY_DIAGRAM_SEN_STYLE,
+                self.diagram_sen_style.to_oudia_string(),
+            ),
         ]);
         if self.diagram_sen_is_bold {
-            values.push(property("DiagramSenIsBold", "1"));
+            values.push(property(KEY_DIAGRAM_SEN_IS_BOLD, "1"));
         }
         values.push(property(
-            "StopMarkDrawType",
+            KEY_STOP_MARK_DRAW_TYPE,
             self.stop_mark_draw_type.to_oudia_string(),
         ));
-        Node::Directory(Directory::new_with_value("Ressyasyubetsu", values))
+        Node::Directory(Directory::new_with_value(KEY_RESSYASYUBETSU, values))
     }
 }
 
@@ -150,23 +163,28 @@ pub enum SenStype {
     Ittensasen,
 }
 impl SenStype {
+    const KEY_JISSEN: &str = "SenStyle_Jissen";
+    const KEY_HASEN: &str = "SenStyle_Hasen";
+    const KEY_TENSEN: &str = "SenStyle_Tensen";
+    const KEY_ITTENSASEN: &str = "SenStyle_Ittensasen";
+
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
             "" => Err(Error::TodoError),
-            "SenStyle_Jissen" => Ok(Self::Jissen),
-            "SenStyle_Hasen" => Ok(Self::Hasen),
-            "SenStyle_Tensen" => Ok(Self::Tensen),
-            "SenStyle_Ittensasen" => Ok(Self::Ittensasen),
+            Self::KEY_JISSEN => Ok(Self::Jissen),
+            Self::KEY_HASEN => Ok(Self::Hasen),
+            Self::KEY_TENSEN => Ok(Self::Tensen),
+            Self::KEY_ITTENSASEN => Ok(Self::Ittensasen),
             _ => Err(Error::TodoError),
         }
     }
 
     fn to_oudia_string(&self) -> &'static str {
         match self {
-            Self::Jissen => "SenStyle_Jissen",
-            Self::Hasen => "SenStyle_Hasen",
-            Self::Tensen => "SenStyle_Tensen",
-            Self::Ittensasen => "SenStyle_Ittensasen",
+            Self::Jissen => Self::KEY_JISSEN,
+            Self::Hasen => Self::KEY_HASEN,
+            Self::Tensen => Self::KEY_TENSEN,
+            Self::Ittensasen => Self::KEY_ITTENSASEN,
         }
     }
 }
@@ -180,21 +198,25 @@ pub enum StopMarkDrawType {
     DrawOnPass,
 }
 impl StopMarkDrawType {
+    const KEY_DRAW_ON_STOP: &str = "EStopMarkDrawType_DrawOnStop";
+    const KEY_NOTHING: &str = "EStopMarkDrawType_Nothing";
+    const KEY_DRAW_ON_PASS: &str = "EStopMarkDrawType_DrawOnPass";
+
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
             "" => Err(Error::TodoError),
-            "EStopMarkDrawType_DrawOnStop" => Ok(Self::DrawOnStop),
-            "EStopMarkDrawType_Nothing" => Ok(Self::Nothing),
-            "EStopMarkDrawType_DrawOnPass" => Ok(Self::DrawOnPass),
+            Self::KEY_DRAW_ON_STOP => Ok(Self::DrawOnStop),
+            Self::KEY_NOTHING => Ok(Self::Nothing),
+            Self::KEY_DRAW_ON_PASS => Ok(Self::DrawOnPass),
             _ => Err(Error::TodoError),
         }
     }
 
     fn to_oudia_string(&self) -> &'static str {
         match self {
-            Self::DrawOnStop => "EStopMarkDrawType_DrawOnStop",
-            Self::Nothing => "EStopMarkDrawType_Nothing",
-            Self::DrawOnPass => "EStopMarkDrawType_DrawOnPass",
+            Self::DrawOnStop => Self::KEY_DRAW_ON_STOP,
+            Self::Nothing => Self::KEY_NOTHING,
+            Self::DrawOnPass => Self::KEY_DRAW_ON_PASS,
         }
     }
 }

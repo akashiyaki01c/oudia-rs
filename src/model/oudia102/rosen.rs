@@ -1,5 +1,5 @@
 use crate::{
-    model::oudia102::{dia::Dia, eki::Eki, error::Error, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
+    model::oudia102::{dia::Dia, eki::Station, error::Error, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
     opt::{directory::Directory, node::Node, property::Property},
 };
 
@@ -9,7 +9,7 @@ pub struct Rosen {
     /// 路線名
     rosenmei: String,
     /// 駅の一覧
-    eki: Vec<Eki>,
+    eki: Vec<Station>,
     /// 列車種別の一覧
     ressyasyubetsu: Vec<Ressyasyubetsu>,
     /// 時刻表の一覧
@@ -39,7 +39,7 @@ impl Rosen {
 
             // Eki[]
             for node in dir.find_all("Eki") {
-                result.eki.push(Eki::from_node(node)?);
+                result.eki.push(Station::from_node(node)?);
             }
 
             // Ressyasyubetsu[]
@@ -85,7 +85,7 @@ impl Rosen {
 
     pub(crate) fn to_node(&self) -> Node {
         let mut values = vec![property("Rosenmei", &self.rosenmei)];
-        values.extend(self.eki.iter().map(Eki::to_node));
+        values.extend(self.eki.iter().map(Station::to_node));
         values.extend(self.ressyasyubetsu.iter().map(Ressyasyubetsu::to_node));
         values.extend(self.dia.iter().map(Dia::to_node));
         values.push(property("KitenJikoku", self.kiten_jikoku.to_oudia_string()));

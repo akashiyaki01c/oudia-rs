@@ -5,6 +5,15 @@ use crate::{
     opt::{directory::Directory, node::Node, property::Property},
 };
 
+const KEY_RESSYA: &str = "Ressya";
+const KEY_HOUKOU: &str = "Houkou";
+const KEY_SYUBETSU: &str = "Syubetsu";
+const KEY_RESSYABANGOU: &str = "Ressyabangou";
+const KEY_RESSYAMEI: &str = "Ressyamei";
+const KEY_GOSUU: &str = "Gosuu";
+const KEY_EKI_JIKOKU: &str = "EkiJikoku";
+const KEY_BIKOU: &str = "Bikou";
+
 /// 1つの列車を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Ressya {
@@ -31,7 +40,7 @@ impl Ressya {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // Houkou
-            if let Some(Node::Property(houkou)) = dir.find("Houkou") {
+            if let Some(Node::Property(houkou)) = dir.find(KEY_HOUKOU) {
                 result.houkou = Houkou::from_str(&houkou.value)?;
             } else {
                 result.houkou = Houkou::Null;
@@ -39,28 +48,28 @@ impl Ressya {
             }
 
             // Syubetsu
-            if let Some(Node::Property(syubetsu)) = dir.find("Syubetsu") {
+            if let Some(Node::Property(syubetsu)) = dir.find(KEY_SYUBETSU) {
                 result.ressyasyubetsu_index =
                     syubetsu.value.parse().map_err(|_| Error::TodoError)?;
             }
 
             // Ressyabangou
-            if let Some(Node::Property(ressyabangou)) = dir.find("Ressyabangou") {
+            if let Some(Node::Property(ressyabangou)) = dir.find(KEY_RESSYABANGOU) {
                 result.ressyabangou = ressyabangou.value.to_string();
             }
 
             // Ressyamei
-            if let Some(Node::Property(ressyamei)) = dir.find("Ressyamei") {
+            if let Some(Node::Property(ressyamei)) = dir.find(KEY_RESSYAMEI) {
                 result.ressyamei = ressyamei.value.to_string();
             }
 
             // Gosuu
-            if let Some(Node::Property(gosuu)) = dir.find("Gosuu") {
+            if let Some(Node::Property(gosuu)) = dir.find(KEY_GOSUU) {
                 result.gousuu = gosuu.value.to_string();
             }
 
             // Ekijikoku
-            if let Some(Node::Property(ekijikoku)) = dir.find("EkiJikoku") {
+            if let Some(Node::Property(ekijikoku)) = dir.find(KEY_EKI_JIKOKU) {
                 let ekijikoku: Result<Vec<Ekijikoku>, Error> = ekijikoku
                     .value
                     .split(",")
@@ -70,7 +79,7 @@ impl Ressya {
             }
 
             // Bikou
-            if let Some(Node::Property(bikou)) = dir.find("Bikou") {
+            if let Some(Node::Property(bikou)) = dir.find(KEY_BIKOU) {
                 result.bikou = bikou.value.to_string();
             }
         } else {
@@ -82,23 +91,23 @@ impl Ressya {
 
     pub(crate) fn to_node(&self) -> Node {
         if self.houkou == Houkou::Null {
-            return Node::Directory(Directory::new_with_value("Ressya", vec![]));
+            return Node::Directory(Directory::new_with_value(KEY_RESSYA, vec![]));
         }
         let mut values = vec![
-            property("Houkou", self.houkou.to_string()),
-            property("Syubetsu", self.ressyasyubetsu_index.to_string()),
+            property(KEY_HOUKOU, self.houkou.to_string()),
+            property(KEY_SYUBETSU, self.ressyasyubetsu_index.to_string()),
         ];
         if !self.ressyabangou.is_empty() {
-            values.push(property("Ressyabangou", &self.ressyabangou));
+            values.push(property(KEY_RESSYABANGOU, &self.ressyabangou));
         }
         if !self.ressyamei.is_empty() {
-            values.push(property("Ressyamei", &self.ressyamei));
+            values.push(property(KEY_RESSYAMEI, &self.ressyamei));
         }
         if !self.gousuu.is_empty() {
-            values.push(property("Gousuu", &self.gousuu));
+            values.push(property(KEY_GOSUU, &self.gousuu));
         }
         values.push(property(
-            "EkiJikoku",
+            KEY_EKI_JIKOKU,
             self.ekijikoku
                 .iter()
                 .map(Ekijikoku::to_oudia_string)
@@ -106,15 +115,18 @@ impl Ressya {
                 .join(","),
         ));
         if !self.bikou.is_empty() {
-            values.push(property("Bikou", &self.bikou));
+            values.push(property(KEY_BIKOU, &self.bikou));
         }
-        Node::Directory(Directory::new_with_value("Ressya", values))
+        Node::Directory(Directory::new_with_value(KEY_RESSYA, values))
     }
 }
 
 fn property(name: &str, value: impl Into<String>) -> Node {
     Node::Property(Property::new_with_value(name, value.into()))
 }
+
+const KEY_KUDARI: &str = "Kudari";
+const KEY_NOBORI: &str = "Nobori";
 
 /// 列車の運転方向を表す列挙体
 #[derive(Debug, Default, PartialEq, Clone)]
@@ -127,16 +139,16 @@ pub enum Houkou {
 impl Houkou {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
-            "Kudari" => Ok(Self::Kudari),
-            "Nobori" => Ok(Self::Nobori),
+            KEY_KUDARI => Ok(Self::Kudari),
+            KEY_NOBORI => Ok(Self::Nobori),
             _ => Err(Error::TodoError),
         }
     }
 
     pub fn to_string(&self) -> String {
         match &self {
-            Houkou::Kudari => "Kudari".to_string(),
-            Houkou::Nobori => "Nobori".to_string(),
+            Houkou::Kudari => KEY_KUDARI.to_string(),
+            Houkou::Nobori => KEY_NOBORI.to_string(),
             Houkou::Null => unreachable!(),
         }
     }

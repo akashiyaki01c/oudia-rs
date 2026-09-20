@@ -3,21 +3,29 @@ use crate::{
     opt::{directory::Directory, node::Node, property::Property},
 };
 
+const KEY_EKI: &str = "Eki";
+const KEY_EKIMEI: &str = "Ekimei";
+const KEY_EKIJIKOKUKEISIKI: &str = "Ekijikokukeisiki";
+const KEY_EKIKIBO: &str = "Ekikibo";
+const KEY_KYOUKAISEN: &str = "Kyoukaisen";
+const KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_KUDARI: &str = "DiagramRessyajouhouHyoujiKudari";
+const KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_NOBORI: &str = "DiagramRessyajouhouHyoujiNobori";
+
 /// 一つの駅を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
-pub struct Eki {
+pub struct Station {
     /// 駅名
-    ekimei: String,
+    name: String,
     /// 駅時刻形式
-    ekijikokukeisiki: Ekijikokukeisiki,
+    timetable_display_format: Ekijikokukeisiki,
     /// 駅規模
-    ekikibo: Ekikibo,
+    sta_scale: StationScale,
     /// 境界線を引くか
     kyoukaisen: bool,
     diagram_ressyajouhou_hyouji_kudari: DiagramRessyajouhouHyouji,
     diagram_ressyajouhou_hyouji_nobori: DiagramRessyajouhouHyouji,
 }
-impl Eki {
+impl Station {
     pub fn from_node(node: &Node) -> Result<Self, Error> {
         let mut result = Self::default();
 
@@ -25,37 +33,37 @@ impl Eki {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // Ekimei
-            if let Some(ekimei) = dir.find("Ekimei") {
+            if let Some(ekimei) = dir.find(KEY_EKIMEI) {
                 if let Node::Property(ekimei) = ekimei {
-                    result.ekimei = ekimei.value.clone();
+                    result.name = ekimei.value.clone();
                 }
             } else {
-                return Err(Error::KeyIsNotFound("Ekimei".to_string()))
+                return Err(Error::KeyIsNotFound(KEY_EKIMEI.to_string()));
             }
 
             // Ekijikokukeisiki
-            if let Some(ekimei) = dir.find("Ekijikokukeisiki") {
+            if let Some(ekimei) = dir.find(KEY_EKIJIKOKUKEISIKI) {
                 if let Node::Property(ekimei) = ekimei {
-                    result.ekijikokukeisiki = Ekijikokukeisiki::from_str(&ekimei.value)?;
+                    result.timetable_display_format = Ekijikokukeisiki::from_str(&ekimei.value)?;
                 }
             }
 
             // Ekikibo
-            if let Some(ekikibo) = dir.find("Ekikibo") {
+            if let Some(ekikibo) = dir.find(KEY_EKIKIBO) {
                 if let Node::Property(ekikibo) = ekikibo {
-                    result.ekikibo = Ekikibo::from_str(&ekikibo.value)?;
+                    result.sta_scale = StationScale::from_str(&ekikibo.value)?;
                 }
             }
 
             // Kyoukaisen
-            if let Some(kyoukaisen) = dir.find("Kyoukaisen")
+            if let Some(kyoukaisen) = dir.find(KEY_KYOUKAISEN)
                 && let Node::Property(kyoukaisen) = kyoukaisen
             {
                 result.kyoukaisen = kyoukaisen.value == "1";
             }
 
             // m_bDiagramRessyajouhouHyoujiKudari
-            if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiKudari")
+            if let Some(hyouji) = dir.find(KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_KUDARI)
                 && let Node::Property(hyouji) = hyouji
             {
                 result.diagram_ressyajouhou_hyouji_kudari =
@@ -63,7 +71,7 @@ impl Eki {
             }
 
             // m_bDiagramRessyajouhouHyoujiNobori
-            if let Some(hyouji) = dir.find("DiagramRessyajouhouHyoujiNobori")
+            if let Some(hyouji) = dir.find(KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_NOBORI)
                 && let Node::Property(hyouji) = hyouji
             {
                 result.diagram_ressyajouhou_hyouji_nobori =
@@ -78,19 +86,22 @@ impl Eki {
 
     pub(crate) fn to_node(&self) -> Node {
         let mut values = vec![
-            property("Ekimei", &self.ekimei),
-            property("Ekijikokukeisiki", self.ekijikokukeisiki.to_oudia_string()),
-            property("Ekikibo", self.ekikibo.to_oudia_string()),
+            property(KEY_EKIMEI, &self.name),
+            property(
+                KEY_EKIJIKOKUKEISIKI,
+                self.timetable_display_format.to_oudia_string(),
+            ),
+            property(KEY_EKIKIBO, self.sta_scale.to_oudia_string()),
         ];
         if self.kyoukaisen {
-            values.push(property("Kyoukaisen", "1"));
+            values.push(property(KEY_KYOUKAISEN, "1"));
         }
         if !matches!(
             self.diagram_ressyajouhou_hyouji_kudari,
             DiagramRessyajouhouHyouji::Origin
         ) {
             values.push(property(
-                "DiagramRessyajouhouHyoujiKudari",
+                KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_KUDARI,
                 self.diagram_ressyajouhou_hyouji_kudari.to_oudia_string(),
             ));
         }
@@ -99,14 +110,11 @@ impl Eki {
             DiagramRessyajouhouHyouji::Origin
         ) {
             values.push(property(
-                "DiagramRessyajouhouHyoujiNobori",
+                KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_NOBORI,
                 self.diagram_ressyajouhou_hyouji_nobori.to_oudia_string(),
             ));
         }
-        Node::Directory(Directory::new_with_value(
-            "Eki",
-            values,
-        ))
+        Node::Directory(Directory::new_with_value(KEY_EKI, values))
     }
 }
 
@@ -119,59 +127,64 @@ fn property(name: &str, value: impl Into<String>) -> Node {
 pub enum Ekijikokukeisiki {
     /// 発車時刻のみ
     #[default]
-    Hatsu,
+    DepartureOnly,
     /// 発車時刻・到着時刻
-    Hatsuchaku,
+    DepartureAndArrival,
     /// 下りは着時刻のみ、上りは発時刻のみ
-    KudariChaku,
+    OutboundArrival,
     /// 下りは発時刻のみ、上りは着時刻のみ
-    NoboriChaku,
+    InboundArrival,
 }
 impl Ekijikokukeisiki {
+    const KEY_HATSU: &str = "Jikokukeisiki_Hatsu";
+    const KEY_HATSUCHAKU: &str = "Jikokukeisiki_Hatsuchaku";
+    const KEY_KUDARI_CHAKU: &str = "Jikokukeisiki_KudariChaku";
+    const KEY_NOBORI_CHAKU: &str = "Jikokukeisiki_NoboriChaku";
+
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
             "" => Err(Error::TodoError),
-            "Jikokukeisiki_Hatsu" => Ok(Self::Hatsu),
-            "Jikokukeisiki_Hatsuchaku" => Ok(Self::Hatsuchaku),
-            "Jikokukeisiki_KudariChaku" => Ok(Self::KudariChaku),
-            "Jikokukeisiki_NoboriChaku" => Ok(Self::NoboriChaku),
+            Self::KEY_HATSU => Ok(Self::DepartureOnly),
+            Self::KEY_HATSUCHAKU => Ok(Self::DepartureAndArrival),
+            Self::KEY_KUDARI_CHAKU => Ok(Self::OutboundArrival),
+            Self::KEY_NOBORI_CHAKU => Ok(Self::InboundArrival),
             _ => Err(Error::TodoError),
         }
     }
 
     fn to_oudia_string(&self) -> &'static str {
         match self {
-            Self::Hatsu => "Jikokukeisiki_Hatsu",
-            Self::Hatsuchaku => "Jikokukeisiki_Hatsuchaku",
-            Self::KudariChaku => "Jikokukeisiki_KudariChaku",
-            Self::NoboriChaku => "Jikokukeisiki_NoboriChaku",
+            Self::DepartureOnly => Self::KEY_HATSU,
+            Self::DepartureAndArrival => Self::KEY_HATSUCHAKU,
+            Self::OutboundArrival => Self::KEY_KUDARI_CHAKU,
+            Self::InboundArrival => Self::KEY_NOBORI_CHAKU,
         }
     }
 }
 
 /// 駅規模
 #[derive(Debug, Default, PartialEq, Clone)]
-pub enum Ekikibo {
+pub enum StationScale {
     /// 一般駅
     #[default]
-    Ippan,
+    Normal,
     /// 主要駅
-    Syuyou,
+    Terminal,
 }
-impl Ekikibo {
+impl StationScale {
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
             "" => Err(Error::TodoError),
-            "Ekikibo_Ippan" => Ok(Self::Ippan),
-            "Ekikibo_Syuyou" => Ok(Self::Syuyou),
+            "Ekikibo_Ippan" => Ok(Self::Normal),
+            "Ekikibo_Syuyou" => Ok(Self::Terminal),
             _ => Err(Error::TodoError),
         }
     }
 
     fn to_oudia_string(&self) -> &'static str {
         match self {
-            Self::Ippan => "Ekikibo_Ippan",
-            Self::Syuyou => "Ekikibo_Syuyou",
+            Self::Normal => "Ekikibo_Ippan",
+            Self::Terminal => "Ekikibo_Syuyou",
         }
     }
 }
