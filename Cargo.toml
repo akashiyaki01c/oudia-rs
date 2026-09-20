@@ -1,9 +1,11 @@
 [package]
 name = "oudia-rs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "GPL-3.0-or-later"
 description = "oudia-rs is a library for loading OuDia files (`.oud`)."
+repository = "https://github.com/akashiyaki01c/oudia-rs"
+keywords = ["oudia"]
 
 [dependencies]
 encoding_rs = "0.8.41"
