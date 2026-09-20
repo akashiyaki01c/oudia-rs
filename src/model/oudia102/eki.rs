@@ -62,7 +62,7 @@ impl Station {
                 result.kyoukaisen = kyoukaisen.value == "1";
             }
 
-            // m_bDiagramRessyajouhouHyoujiKudari
+            // DiagramRessyajouhouHyoujiKudari
             if let Some(hyouji) = dir.find(KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_KUDARI)
                 && let Node::Property(hyouji) = hyouji
             {
@@ -70,7 +70,7 @@ impl Station {
                     DiagramRessyajouhouHyouji::from_str(&hyouji.value)?;
             }
 
-            // m_bDiagramRessyajouhouHyoujiNobori
+            // DiagramRessyajouhouHyoujiNobori
             if let Some(hyouji) = dir.find(KEY_DIAGRAM_RESSYAJOUHOU_HYOUJI_NOBORI)
                 && let Node::Property(hyouji) = hyouji
             {

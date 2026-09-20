@@ -33,7 +33,10 @@ pub fn deserialize_property(text: &str) -> Property {
 pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option<Node>, Error> {
     let first_line = iter.next().unwrap();
 
-    if let Some(name) = first_line.strip_suffix(".") {
+    if first_line.contains("=") {
+        // property
+        Ok(Some(Node::Property(deserialize_property(first_line))))
+    } else if let Some(name) = first_line.strip_suffix(".") {
         // directory
         let mut nodes = vec![];
         let mut is_success = false;
@@ -54,9 +57,6 @@ pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option
         Ok(Some(Node::Directory(Directory::new_with_value(
             name, nodes,
         ))))
-    } else if first_line.contains("=") {
-        // property
-        Ok(Some(Node::Property(deserialize_property(first_line))))
     } else {
         Ok(None)
     }

@@ -33,7 +33,7 @@ impl Rosen {
                     result.rosenmei = rosenmei.value.clone();
                 }
             } else {
-                todo!();
+                return Err(Error::NodeTypeError);
             }
 
             // Eki[]
