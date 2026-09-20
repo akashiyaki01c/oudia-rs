@@ -5,6 +5,13 @@
 [![License](https://img.shields.io/crates/l/oudia-rs.svg)](https://github.com/akashiyaki01c/oudia-rs#license)
 
 
-oudia-rsはOuDiaファイル(`.oud`)をRust上で読み込むライブラリです
+oudia-rs is a library for loading OuDia files (`.oud`) in Rust.
 
-このライブラリはOuDiaと同様にGPL3.0のもとで配布されます。
+## License
+
+This project is licensed under either of
+
+* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
+* MIT license ([LICENSE-MIT](LICENSE-MIT) or https://opensource.org/licenses/MIT)
+
+at your option.

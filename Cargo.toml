@@ -1,8 +1,8 @@
 [package]
 name = "oudia-rs"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
-license = "GPL-3.0-or-later"
+license = "MIT OR Apache-2.0"
 description = "oudia-rs is a library for loading OuDia files (`.oud`)."
 repository = "https://github.com/akashiyaki01c/oudia-rs"
 keywords = ["oudia"]
