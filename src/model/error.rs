@@ -23,4 +23,6 @@ pub enum Error {
     InvalidFormat { context: String, value: String },
     #[error("property \"{0}\" must be an array")]
     ExpectedArray(String),
+	#[error("invalid file format {0}")]
+	InvalidFileFormat(#[from] crate::opt::error::Error)
 }
