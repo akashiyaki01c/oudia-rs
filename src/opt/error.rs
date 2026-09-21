@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum Error {
     /// 文字列がデコードできない
     #[error("文字列がデコードできません。")]
@@ -12,6 +12,8 @@ pub enum Error {
     #[error("ディレクトリが閉じていません。")]
     ContainerIsNotClosed,
     ///
-    #[error("")]
+    #[error("ファイルが空です。")]
     EmptyFile,
+    #[error("未定義の構造")]
+    UnknownStruct,
 }

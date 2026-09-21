@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::{
     model::{
         error::Error,
-        oudia102::{color::ColorProp, font::FontProp},
+        oudiasecond100::{color::ColorProp, font::FontProp},
     },
     opt::{directory::Directory, node::Node, property::Property},
 };
@@ -23,6 +23,8 @@ const KEY_EKIMEI_LENGTH: &str = "EkimeiLength";
 const KEY_JIKOKUHYOU_RESSYA_WIDTH: &str = "JikokuhyouRessyaWidth";
 const KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_KUDARI: &str = "DiaRessyajouhouHyoujiEkiOrderKudari";
 const KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_NOBORI: &str = "DiaRessyajouhouHyoujiEkiOrderNobori";
+const KEY_ANY_SECOND_INC_DEC1: &str = "AnySecondIncDec1";
+const KEY_ANY_SECOND_INC_DEC2: &str = "AnySecondIncDec2";
 
 /// 時刻表のフォント設定数
 const JIKOKUHYOUFONT_COUNT: usize = 8;
@@ -44,6 +46,8 @@ pub struct DisplayProperties {
     jikokuhyou_ressya_width: usize,
     dia_ressyajouhou_hyouji_eki_order_kudari: usize,
     dia_ressyajouhou_hyouji_eki_order_nobori: usize,
+    any_second_inc_dec_1: usize,
+    any_second_inc_dec_2: usize,
 }
 impl DisplayProperties {
     pub fn from_node(node: &Node) -> Result<Self, Error> {
@@ -153,6 +157,28 @@ impl DisplayProperties {
                         value: order.value.to_string(),
                     })?;
             }
+
+            // AnySecondIncDec1
+            if let Some(Node::Property(order)) =
+                dir.find(KEY_ANY_SECOND_INC_DEC1)
+            {
+                result.any_second_inc_dec_1 =
+                    order.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_ANY_SECOND_INC_DEC1.to_string(),
+                        value: order.value.to_string(),
+                    })?;
+            }
+
+            // AnySecondIncDec2
+            if let Some(Node::Property(order)) =
+                dir.find(KEY_ANY_SECOND_INC_DEC2)
+            {
+                result.any_second_inc_dec_2 =
+                    order.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_ANY_SECOND_INC_DEC2.to_string(),
+                        value: order.value.to_string(),
+                    })?;
+            }
         } else {
             unreachable!()
         }
@@ -183,6 +209,14 @@ impl DisplayProperties {
             property(
                 KEY_JIKOKUHYOU_RESSYA_WIDTH,
                 self.jikokuhyou_ressya_width.to_string(),
+            ),
+            property(
+                KEY_ANY_SECOND_INC_DEC1,
+                self.any_second_inc_dec_1.to_string(),
+            ),
+            property(
+                KEY_ANY_SECOND_INC_DEC2,
+                self.any_second_inc_dec_2.to_string(),
             ),
         ]);
         Node::Directory(Directory::new_with_value(KEY_DISP_PROP, values))

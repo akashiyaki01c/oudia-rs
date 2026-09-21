@@ -1,4 +1,4 @@
-# `OuDia.1.02` File Format
+# `OuDiaSecond.1.00` File Format
 
 ## Outline
 
@@ -13,7 +13,13 @@
 				- `Ressya`
 	- `DispProp`
 
-`OuDia.1.02` 形式は、 `OuPropertiesText`記法を用いてダイヤグラムの各要素をシリアル化します。
+`OuDiaSecond.1.00` 形式は、 `OuPropertiesText`記法を用いてダイヤグラムの各要素をシリアル化します。
+
+## `OuDia.1.02` 形式からの変更点
+
+- `/FileType` が `OuDia.1.02` から `OuDiaSecond.1.00` に変更されました。(OuDiaSecond v1.01より)
+- `Ekijikokukeisiki` Propertyに `Jikokukeisiki_KudariHatsuchaku`、`Jikokukeisiki_NoboriHatsuchaku` が追加されました。
+- `DispProp` Directoryに `AnySecondIncDec1`、`AnySecondIncDec2` が追加されました。
 
 ## OuPropertiesText
 
@@ -108,6 +114,8 @@ Newline       ::= "\r\n" ;
 - `Jikokukeisiki_Hatsuchaku`
 - `Jikokukeisiki_KudariChaku`
 - `Jikokukeisiki_NoboriChaku`
+- `Jikokukeisiki_KudariHatsuchaku`
+- `Jikokukeisiki_NoboriHatsuchaku`
 
 ### Ekikibo Property
 
@@ -234,6 +242,8 @@ Newline       ::= "\r\n" ;
 |JikokuhyouRessyaWidth|Unsigned Int (Property)|Optional|時刻表上での列車表示欄の桁数を表します。|
 |DiaRessyajouhouHyoujiEkiOrderKudari|String (Property)|Optional|未使用|
 |DiaRessyajouhouHyoujiEkiOrderNobori|String (Property)|Optional|未使用|
+|AnySecondIncDec1|Unsigned Int (Property)|Optional|任意秒移動1の秒数を表します。|
+|AnySecondIncDec2|Unsigned Int (Property)|Optional|任意秒移動2の秒数を表します。|
 
 
 ## Color Property

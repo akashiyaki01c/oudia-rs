@@ -3,6 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/oudia-rs.svg)](https://crates.io/crates/oudia-rs)
 [![Documentation](https://docs.rs/oudia-rs/badge.svg)](https://docs.rs/oudia-rs)
 [![License](https://img.shields.io/crates/l/oudia-rs.svg)](https://github.com/akashiyaki01c/oudia-rs#license)
+![](https://img.shields.io/badge/status-Alpha_version-red.svg)
 
 oudia-rs is a Rust library for parsing and serializing OuDia files (`.oud`).
 
@@ -40,13 +41,6 @@ Add the crate to your project with Cargo:
 
 ```bash
 cargo add oudia-rs
-```
-
-If you prefer to edit `Cargo.toml` manually:
-
-```toml
-[dependencies]
-oudia-rs = "0.1.2"
 ```
 
 ## Quick start

@@ -132,12 +132,18 @@ pub enum Ekijikokukeisiki {
     OutboundArrival,
     /// 下りは発時刻のみ、上りは着時刻のみ
     InboundArrival,
+    /// 下りは発着時刻、上りは発時刻のみ
+    OutboundDepartureAndArrival,
+    /// 下りは発時刻のみ、上りは発着時刻
+    InboundDepartureAndArrival,
 }
 impl Ekijikokukeisiki {
     const KEY_HATSU: &str = "Jikokukeisiki_Hatsu";
     const KEY_HATSUCHAKU: &str = "Jikokukeisiki_Hatsuchaku";
     const KEY_KUDARI_CHAKU: &str = "Jikokukeisiki_KudariChaku";
     const KEY_NOBORI_CHAKU: &str = "Jikokukeisiki_NoboriChaku";
+    const KEY_KUDARI_HATSUCHAKU: &str = "Jikokukeisiki_KudariHatsuchaku";
+    const KEY_NOBORI_HATSUCHAKU: &str = "Jikokukeisiki_NoboriHatsuchaku";
 
     pub fn from_str(value: &str) -> Result<Self, Error> {
         match value {
@@ -149,6 +155,8 @@ impl Ekijikokukeisiki {
             Self::KEY_HATSUCHAKU => Ok(Self::DepartureAndArrival),
             Self::KEY_KUDARI_CHAKU => Ok(Self::OutboundArrival),
             Self::KEY_NOBORI_CHAKU => Ok(Self::InboundArrival),
+            Self::KEY_KUDARI_HATSUCHAKU => Ok(Self::OutboundDepartureAndArrival),
+            Self::KEY_NOBORI_HATSUCHAKU => Ok(Self::InboundDepartureAndArrival),
             _ => Err(Error::InvalidEnum {
                 field: "Jikokukeisiki".to_string(),
                 value: value.to_string(),
@@ -162,6 +170,8 @@ impl Ekijikokukeisiki {
             Self::DepartureAndArrival => Self::KEY_HATSUCHAKU,
             Self::OutboundArrival => Self::KEY_KUDARI_CHAKU,
             Self::InboundArrival => Self::KEY_NOBORI_CHAKU,
+            Self::OutboundDepartureAndArrival => Self::KEY_KUDARI_HATSUCHAKU,
+            Self::InboundDepartureAndArrival => Self::KEY_NOBORI_HATSUCHAKU,
         }
     }
 }

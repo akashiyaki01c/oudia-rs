@@ -1,5 +1,5 @@
 use crate::{
-    model::{error::Error, oudia102::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu}}, opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudiasecond100::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu}}, opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 路線を表す構造体

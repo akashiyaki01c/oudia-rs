@@ -1,12 +1,8 @@
 use crate::{
-    model::{
-        error::Error,
-        oudia102::{disp_prop::DisplayProperties, rosen::Rosen},
-    },
-    opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
+    model::{error::Error, oudiasecond100::{disp_prop::DisplayProperties, rosen::Rosen}}, opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
 
-const FILE_TYPE_VERSION: &str = "OuDia.1.02";
+const FILE_TYPE_VERSION: &str = "OuDiaSecond.1.00";
 const KEY_FILE_TYPE: &str = "FileType";
 const KEY_ROSEN: &str = "Rosen";
 const KEY_DISP_PROP: &str = "DispProp";
@@ -52,8 +48,7 @@ impl RosenFileData {
             }
 
             // FileTypeAppComment
-            if let Some(Node::Property(file_type_app_comment)) = dir.find(KEY_FILE_TYPE_APP_COMMENT)
-            {
+            if let Some(Node::Property(file_type_app_comment)) = dir.find(KEY_FILE_TYPE_APP_COMMENT) {
                 result.file_type_app_comment = file_type_app_comment.value.clone();
             }
         } else {
@@ -100,28 +95,12 @@ impl RosenFileData {
         result
     }
 
-    /// OuDiaファイル用のShift-JISバイト列で書き出します。
+    /// UTF-8バイト列で書き出します。
     pub fn to_oudia_bytes(&self) -> Vec<u8> {
         let text = self.to_oudia_string();
-        let (encoded, _, _) = encoding_rs::SHIFT_JIS.encode(&text);
-        encoded.into_owned()
+        let encoded = text.as_bytes();
+        encoded.to_owned()
     }
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum FileType {
-    /// `OuDia.2`
-    OuDia02,
-    /// `OuDia.3`
-    OuDia03,
-    /// `OuDia.5`
-    OuDia05,
-    /// `OuDia.6`
-    OuDia06,
-    /// `OuDia.1.01`
-    OuDia101,
-    /// `OuDia.1.02`
-    OuDia102,
 }
 
 #[cfg(test)]
@@ -155,9 +134,7 @@ mod tests {
                     ));
                 }
                 for (index, (left, right)) in left.values.iter().zip(&right.values).enumerate() {
-                    if let Some(difference) =
-                        first_difference(left, right, &format!("{path}[{index}]"))
-                    {
+                    if let Some(difference) = first_difference(left, right, &format!("{path}[{index}]")) {
                         return Some(difference);
                     }
                 }
@@ -172,11 +149,12 @@ mod tests {
         let data = include_bytes!("../../../test_data/keio.oud");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
-        let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
-            "ROOT",
-            nodes.clone(),
-        )))
-        .unwrap();
+        let file =
+            RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
+                "ROOT",
+                nodes.clone(),
+            )))
+            .unwrap();
 
         let written = file.to_oudia_string();
         if text != written {
