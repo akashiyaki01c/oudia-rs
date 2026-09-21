@@ -43,13 +43,6 @@ Add the crate to your project with Cargo:
 cargo add oudia-rs
 ```
 
-If you prefer to edit `Cargo.toml` manually:
-
-```toml
-[dependencies]
-oudia-rs = "0.1.2"
-```
-
 ## Quick start
 
 ```rust
