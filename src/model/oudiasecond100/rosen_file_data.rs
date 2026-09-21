@@ -2,6 +2,12 @@ use crate::{
     model::{error::Error, oudiasecond100::{disp_prop::DisplayProperties, rosen::Rosen}}, opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
 
+const FILE_TYPE_VERSION: &str = "OuDiaSecond.1.00";
+const KEY_FILE_TYPE: &str = "FileType";
+const KEY_ROSEN: &str = "Rosen";
+const KEY_DISP_PROP: &str = "DispProp";
+const KEY_FILE_TYPE_APP_COMMENT: &str = "FileTypeAppComment";
+
 /// 1つのOuDiaファイルを表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct RosenFileData {
@@ -20,29 +26,29 @@ impl RosenFileData {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // FileType
-            let Some(Node::Property(version)) = dir.find("FileType") else {
+            let Some(Node::Property(version)) = dir.find(KEY_FILE_TYPE) else {
                 return Err(Error::InvalidVersion);
             };
-            if version.value != "OuDiaSecond.1.00" {
+            if version.value != FILE_TYPE_VERSION {
                 return Err(Error::InvalidVersion);
             }
 
             // Rosen
-            if let Some(rosen) = dir.find("Rosen") {
+            if let Some(rosen) = dir.find(KEY_ROSEN) {
                 result.rosen = Rosen::from_node(rosen)?;
             } else {
-                return Err(Error::KeyIsNotFound("Rosen".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_ROSEN.to_string()));
             }
 
             // DispProp
-            if let Some(disp_prop) = dir.find("DispProp") {
+            if let Some(disp_prop) = dir.find(KEY_DISP_PROP) {
                 result.disp_prop = DisplayProperties::from_node(disp_prop)?;
             } else {
-                return Err(Error::KeyIsNotFound("DispProp".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_DISP_PROP.to_string()));
             }
 
             // FileTypeAppComment
-            if let Some(Node::Property(file_type_app_comment)) = dir.find("FileTypeAppComment") {
+            if let Some(Node::Property(file_type_app_comment)) = dir.find(KEY_FILE_TYPE_APP_COMMENT) {
                 result.file_type_app_comment = file_type_app_comment.value.clone();
             }
         } else {
@@ -58,13 +64,13 @@ impl RosenFileData {
             "ROOT",
             vec![
                 Node::Property(Property::new_with_value(
-                    "FileType",
-                    "OuDia.1.02".to_string(),
+                    KEY_FILE_TYPE,
+                    FILE_TYPE_VERSION.to_string(),
                 )),
                 self.rosen.to_node(),
                 self.disp_prop.to_node(),
                 Node::Property(Property::new_with_value(
-                    "FileTypeAppComment",
+                    KEY_FILE_TYPE_APP_COMMENT,
                     self.file_type_app_comment.clone(),
                 )),
             ],

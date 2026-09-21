@@ -1,6 +1,16 @@
 use crate::{
-    model::{error::Error, oudia102::{disp_prop::DisplayProperties, rosen::Rosen}}, opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
+    model::{
+        error::Error,
+        oudia102::{disp_prop::DisplayProperties, rosen::Rosen},
+    },
+    opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
+
+const FILE_TYPE_VERSION: &str = "OuDia.1.02";
+const KEY_FILE_TYPE: &str = "FileType";
+const KEY_ROSEN: &str = "Rosen";
+const KEY_DISP_PROP: &str = "DispProp";
+const KEY_FILE_TYPE_APP_COMMENT: &str = "FileTypeAppComment";
 
 /// 1つのOuDiaファイルを表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
@@ -20,29 +30,30 @@ impl RosenFileData {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // FileType
-            let Some(Node::Property(version)) = dir.find("FileType") else {
+            let Some(Node::Property(version)) = dir.find(KEY_FILE_TYPE) else {
                 return Err(Error::InvalidVersion);
             };
-            if version.value != "OuDia.1.02" {
+            if version.value != FILE_TYPE_VERSION {
                 return Err(Error::InvalidVersion);
             }
 
             // Rosen
-            if let Some(rosen) = dir.find("Rosen") {
+            if let Some(rosen) = dir.find(KEY_ROSEN) {
                 result.rosen = Rosen::from_node(rosen)?;
             } else {
-                return Err(Error::KeyIsNotFound("Rosen".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_ROSEN.to_string()));
             }
 
             // DispProp
-            if let Some(disp_prop) = dir.find("DispProp") {
+            if let Some(disp_prop) = dir.find(KEY_DISP_PROP) {
                 result.disp_prop = DisplayProperties::from_node(disp_prop)?;
             } else {
-                return Err(Error::KeyIsNotFound("DispProp".to_string()));
+                return Err(Error::KeyIsNotFound(KEY_DISP_PROP.to_string()));
             }
 
             // FileTypeAppComment
-            if let Some(Node::Property(file_type_app_comment)) = dir.find("FileTypeAppComment") {
+            if let Some(Node::Property(file_type_app_comment)) = dir.find(KEY_FILE_TYPE_APP_COMMENT)
+            {
                 result.file_type_app_comment = file_type_app_comment.value.clone();
             }
         } else {
@@ -58,13 +69,13 @@ impl RosenFileData {
             "ROOT",
             vec![
                 Node::Property(Property::new_with_value(
-                    "FileType",
-                    "OuDia.1.02".to_string(),
+                    KEY_FILE_TYPE,
+                    FILE_TYPE_VERSION.to_string(),
                 )),
                 self.rosen.to_node(),
                 self.disp_prop.to_node(),
                 Node::Property(Property::new_with_value(
-                    "FileTypeAppComment",
+                    KEY_FILE_TYPE_APP_COMMENT,
                     self.file_type_app_comment.clone(),
                 )),
             ],
@@ -144,7 +155,9 @@ mod tests {
                     ));
                 }
                 for (index, (left, right)) in left.values.iter().zip(&right.values).enumerate() {
-                    if let Some(difference) = first_difference(left, right, &format!("{path}[{index}]")) {
+                    if let Some(difference) =
+                        first_difference(left, right, &format!("{path}[{index}]"))
+                    {
                         return Some(difference);
                     }
                 }
@@ -159,12 +172,11 @@ mod tests {
         let data = include_bytes!("../../../test_data/keio.oud");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
-        let file =
-            RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
-                "ROOT",
-                nodes.clone(),
-            )))
-            .unwrap();
+        let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
+            "ROOT",
+            nodes.clone(),
+        )))
+        .unwrap();
 
         let written = file.to_oudia_string();
         if text != written {
