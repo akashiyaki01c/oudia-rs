@@ -1,12 +1,12 @@
 use crate::{
-    model::{error::Error, OuDiaFile},
+    model::{OuDiaFile, error::Error},
     opt::{
         deserialize::{deserialize_node, deserialize_node_with_locations},
         directory::Directory,
         node::Node,
         source::{
-            find_location, find_location_by_name, find_parent_location_for_missing,
-            root_location, LocatedNode, NodePath,
+            LocatedNode, NodePath, find_location, find_location_by_name,
+            find_parent_location_for_missing, root_location,
         },
     },
 };
@@ -41,6 +41,7 @@ impl std::error::Error for DeserializeError {}
 pub fn serialize_oudia(data: &OuDiaFile) -> Vec<u8> {
     match data {
         OuDiaFile::OuDia102(rosen_file_data) => rosen_file_data.to_oudia_bytes(),
+        OuDiaFile::OuDiaSecond100(rosen_file_data) => rosen_file_data.to_oudia_bytes(),
     }
 }
 
@@ -99,24 +100,26 @@ pub fn deserialize_oudia(value: &[u8]) -> Result<OuDiaFile, Error> {
         "OuDia.1.02" => Ok(OuDiaFile::OuDia102(
             crate::model::oudia102::RosenFileData::from_node(&file)?,
         )),
+        "OuDiaSecond.1.00" => Ok(OuDiaFile::OuDiaSecond100(
+            crate::model::oudiasecond100::RosenFileData::from_node(&file)?,
+        )),
         _ => Err(Error::InvalidVersion),
     }
 }
 
 /// OuDiaファイルを位置情報付きで解釈し、OuDiaFile構造体に変換します。
-pub fn deserialize_oudia_with_diagnostics(
-    value: &[u8],
-) -> Result<OuDiaFile, DeserializeError> {
+pub fn deserialize_oudia_with_diagnostics(value: &[u8]) -> Result<OuDiaFile, DeserializeError> {
     let value = decode_oudia(value).map_err(|error| DeserializeError {
         error,
         line: None,
         path: None,
     })?;
-    let located_nodes = deserialize_node_with_locations(&value).map_err(|error| DeserializeError {
-        error: Error::InvalidFileFormat(error.error),
-        line: Some(error.line),
-        path: None,
-    })?;
+    let located_nodes =
+        deserialize_node_with_locations(&value).map_err(|error| DeserializeError {
+            error: Error::InvalidFileFormat(error.error),
+            line: Some(error.line),
+            path: None,
+        })?;
     let node = located_nodes
         .iter()
         .map(|located| located.node.clone())
@@ -143,8 +146,9 @@ pub fn deserialize_oudia_with_diagnostics(
     let file_version = file_version.value.clone();
     let file = Node::Directory(file);
     let result = match file_version.as_str() {
-        "OuDia.1.02" => crate::model::oudia102::RosenFileData::from_node(&file)
-            .map(OuDiaFile::OuDia102),
+        "OuDia.1.02" => {
+            crate::model::oudia102::RosenFileData::from_node(&file).map(OuDiaFile::OuDia102)
+        }
         _ => Err(Error::InvalidVersion),
     };
     result.map_err(|error| {
@@ -162,12 +166,14 @@ fn find_model_error_location(
     error: &Error,
 ) -> Option<crate::opt::source::NodeLocation> {
     match error {
-        Error::InvalidValue(name, value) => find_location(nodes, |node| {
-            matches!(node, Node::Property(property) if property.name == *name && property.value == *value)
-        }),
-        Error::EmptyValue(name) => find_location(nodes, |node| {
-            matches!(node, Node::Property(property) if property.name == *name && property.value.is_empty())
-        }),
+        Error::InvalidValue(name, value) => find_location(
+            nodes,
+            |node| matches!(node, Node::Property(property) if property.name == *name && property.value == *value),
+        ),
+        Error::EmptyValue(name) => find_location(
+            nodes,
+            |node| matches!(node, Node::Property(property) if property.name == *name && property.value.is_empty()),
+        ),
         Error::InvalidNumber { field, value } | Error::InvalidEnum { field, value } => {
             let name = field.split('.').next().unwrap_or(field);
             find_location(nodes, |node| {
@@ -194,7 +200,7 @@ fn find_model_error_location(
 #[cfg(test)]
 mod tests {
     use super::{deserialize_oudia, deserialize_oudia_with_diagnostics, serialize_oudia};
-    use crate::model::{error::Error, OuDiaFile};
+    use crate::model::{OuDiaFile, error::Error};
 
     #[test]
     fn deserialize_oudia_accepts_shift_jis_bytes() {
