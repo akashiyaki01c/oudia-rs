@@ -86,7 +86,10 @@ pub fn deserialize_node_inner(
         if first_line.is_empty() {
             Ok(None)
         } else {
-            Err(LocatedError { error: Error::UnknownStruct, line })
+            Err(LocatedError {
+                error: Error::UnknownStruct,
+                line,
+            })
         }
     }
 }

@@ -159,9 +159,7 @@ impl DisplayProperties {
             }
 
             // AnySecondIncDec1
-            if let Some(Node::Property(order)) =
-                dir.find(KEY_ANY_SECOND_INC_DEC1)
-            {
+            if let Some(Node::Property(order)) = dir.find(KEY_ANY_SECOND_INC_DEC1) {
                 result.any_second_inc_dec_1 =
                     order.value.parse().map_err(|_| Error::InvalidNumber {
                         field: KEY_ANY_SECOND_INC_DEC1.to_string(),
@@ -170,9 +168,7 @@ impl DisplayProperties {
             }
 
             // AnySecondIncDec2
-            if let Some(Node::Property(order)) =
-                dir.find(KEY_ANY_SECOND_INC_DEC2)
-            {
+            if let Some(Node::Property(order)) = dir.find(KEY_ANY_SECOND_INC_DEC2) {
                 result.any_second_inc_dec_2 =
                     order.value.parse().map_err(|_| Error::InvalidNumber {
                         field: KEY_ANY_SECOND_INC_DEC2.to_string(),

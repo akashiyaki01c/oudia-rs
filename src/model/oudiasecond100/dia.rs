@@ -1,5 +1,6 @@
 use crate::{
-    model::{error::Error, oudiasecond100::Ressya}, opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudiasecond100::Ressya},
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_DIA: &str = "Dia";

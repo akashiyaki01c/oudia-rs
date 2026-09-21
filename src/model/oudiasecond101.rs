@@ -2,6 +2,7 @@ pub mod color;
 pub mod dia;
 pub mod disp_prop;
 pub mod eki;
+pub mod eki_track;
 pub mod ekijikoku;
 pub mod font;
 pub mod jikoku;
@@ -9,7 +10,6 @@ pub mod ressya;
 pub mod ressyasyubetsu;
 pub mod rosen;
 pub mod rosen_file_data;
-pub mod eki_track;
 
 pub use color::*;
 pub use dia::*;

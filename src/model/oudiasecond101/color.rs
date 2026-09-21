@@ -16,8 +16,8 @@ impl FromStr for ColorProp {
     type Err = Error;
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let value = usize::from_str_radix(value, 16)
-            .map_err(|_| Error::InvalidColor(value.to_string()))?;
+        let value =
+            usize::from_str_radix(value, 16).map_err(|_| Error::InvalidColor(value.to_string()))?;
         let red = (value >> 16 & 0xff) as u8;
         let green = ((value >> 8) & 0xff) as u8;
         let blue = ((value) & 0xff) as u8;

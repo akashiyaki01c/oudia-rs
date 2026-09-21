@@ -43,7 +43,6 @@ impl NodePath {
         }
         Self { segments }
     }
-
 }
 
 impl fmt::Display for NodePath {
@@ -137,10 +136,7 @@ pub(crate) fn root_location(nodes: &[LocatedNode]) -> Option<NodeLocation> {
     })
 }
 
-pub(crate) fn find_location_by_name(
-    nodes: &[LocatedNode],
-    name: &str,
-) -> Option<NodeLocation> {
+pub(crate) fn find_location_by_name(nodes: &[LocatedNode], name: &str) -> Option<NodeLocation> {
     find_location(nodes, |node| node.get_name() == name)
 }
 
@@ -223,7 +219,10 @@ pub(crate) fn find_parent_location_for_missing(
 
         if let Node::Directory(directory) = &node.node
             && node.node.get_name() == parent_name
-            && directory.values.iter().all(|child| child.get_name() != missing_name)
+            && directory
+                .values
+                .iter()
+                .all(|child| child.get_name() != missing_name)
         {
             return Some(NodeLocation {
                 line: node.line,

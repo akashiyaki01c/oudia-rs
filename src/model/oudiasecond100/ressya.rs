@@ -1,7 +1,8 @@
 use std::str::FromStr;
 
 use crate::{
-    model::{error::Error, oudiasecond100::ekijikoku::Ekijikoku}, opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudiasecond100::ekijikoku::Ekijikoku},
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_RESSYA: &str = "Ressya";

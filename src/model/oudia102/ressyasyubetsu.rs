@@ -1,7 +1,8 @@
 use std::str::FromStr;
 
 use crate::{
-    model::{error::Error, oudia102::color::ColorProp}, opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudia102::color::ColorProp},
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_RESSYASYUBETSU: &str = "Ressyasyubetsu";
@@ -76,10 +77,11 @@ impl Ressyasyubetsu {
             if let Some(index) = dir.find(KEY_JIKOKUHYOU_FONT_INDEX)
                 && let Node::Property(index) = index
             {
-                result.jikokuhyou_font_index = index.value.parse().map_err(|_| Error::InvalidNumber {
-                    field: KEY_JIKOKUHYOU_FONT_INDEX.to_string(),
-                    value: index.value.to_string(),
-                })?;
+                result.jikokuhyou_font_index =
+                    index.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_JIKOKUHYOU_FONT_INDEX.to_string(),
+                        value: index.value.to_string(),
+                    })?;
             }
 
             // DiagramSenColor

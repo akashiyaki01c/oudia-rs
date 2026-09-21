@@ -1,4 +1,7 @@
-use crate::{model::error::Error, opt::{directory::Directory, node::Node, property::Property}};
+use crate::{
+    model::error::Error,
+    opt::{directory::Directory, node::Node, property::Property},
+};
 
 const KEY_EKI_TRACK: &str = "EkiTrack2";
 const KEY_TRACK_NAME: &str = "TrackName";
@@ -10,7 +13,7 @@ pub struct EkiTrack {
     /// 番線名
     track_name: String,
     /// 番線の略称名
-	ryakusyou: String,
+    ryakusyou: String,
 }
 impl EkiTrack {
     pub fn from_node(node: &Node) -> Result<Self, Error> {
@@ -26,14 +29,12 @@ impl EkiTrack {
                 }
             }
 
-			// TrackRyakusyou
+            // TrackRyakusyou
             if let Some(ryakusyou) = dir.find(KEY_TRACK_RYAKUSYOU) {
                 if let Node::Property(ryakusyou) = ryakusyou {
                     result.ryakusyou = ryakusyou.value.clone();
                 }
             }
-
-            
         } else {
             unreachable!()
         }
@@ -44,10 +45,9 @@ impl EkiTrack {
     pub(crate) fn to_node(&self) -> Node {
         let values = vec![
             property(KEY_TRACK_NAME, &self.track_name),
-			property(KEY_TRACK_RYAKUSYOU, &self.ryakusyou),
-            
+            property(KEY_TRACK_RYAKUSYOU, &self.ryakusyou),
         ];
-        
+
         Node::Directory(Directory::new_with_value(KEY_EKI_TRACK, values))
     }
 }
