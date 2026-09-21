@@ -7,3 +7,4 @@ pub mod escape;
 pub mod node;
 pub mod property;
 pub mod serialize;
+pub mod source;

@@ -1,20 +1,32 @@
-use std::{iter::Peekable, str::Split};
-
-use crate::opt::{directory::Directory, error::Error, node::Node, property::Property};
+use crate::opt::{
+    directory::Directory,
+    error::Error,
+    node::Node,
+    property::Property,
+    source::{collect_locations, LocatedError, LocatedNode, NodeLocation},
+};
 
 pub fn deserialize_node(text: &str) -> Result<Vec<Node>, Error> {
-    let mut lines = text.split("\r\n").peekable();
+    deserialize_node_with_locations(text)
+        .map(|nodes| nodes.into_iter().map(|node| node.node).collect())
+        .map_err(|error| error.error)
+}
+
+pub fn deserialize_node_with_locations(text: &str) -> Result<Vec<LocatedNode>, LocatedError> {
+    let lines: Vec<&str> = text.split("\r\n").collect();
+    let mut index = 0;
     let mut nodes = vec![];
-    while lines.peek().is_some() {
-        if let Some(node) = deserialize_node_inner(&mut lines)? {
+    while index < lines.len() {
+        if let Some(node) = deserialize_node_inner(&lines, &mut index)? {
             nodes.push(node);
         }
     }
-    if lines.peek().is_some() {
-        return Err(Error::ContainerAborted);
-    }
 
     Ok(nodes)
+}
+
+pub fn node_locations(nodes: &[LocatedNode]) -> Vec<NodeLocation> {
+    collect_locations(nodes)
 }
 
 pub fn deserialize_property(text: &str) -> Property {
@@ -30,33 +42,46 @@ pub fn deserialize_property(text: &str) -> Property {
     }
 }
 
-pub fn deserialize_node_inner(iter: &mut Peekable<Split<&str>>) -> Result<Option<Node>, Error> {
-    let first_line = iter.next().unwrap();
+pub fn deserialize_node_inner(
+    lines: &[&str],
+    index: &mut usize,
+) -> Result<Option<LocatedNode>, LocatedError> {
+    let line = *index + 1;
+    let first_line = lines[*index];
+    *index += 1;
 
     if first_line.contains("=") {
         // property
-        Ok(Some(Node::Property(deserialize_property(first_line))))
+        Ok(Some(LocatedNode::property(
+            deserialize_property(first_line),
+            line,
+        )))
     } else if let Some(name) = first_line.strip_suffix(".") {
         // directory
         let mut nodes = vec![];
         let mut is_success = false;
-        while let Some(next_line) = iter.peek() {
-            if *next_line == "." {
+        while *index < lines.len() {
+            if lines[*index] == "." {
                 is_success = true;
-                iter.next();
+                *index += 1;
                 break;
             }
-            if let Some(node) = deserialize_node_inner(iter)? {
+            if let Some(node) = deserialize_node_inner(lines, index)? {
                 nodes.push(node);
             }
         }
         if !is_success {
-            return Err(Error::ContainerIsNotClosed);
+            return Err(LocatedError {
+                error: Error::ContainerIsNotClosed,
+                line,
+            });
         }
 
-        Ok(Some(Node::Directory(Directory::new_with_value(
-            name, nodes,
-        ))))
+        let directory = Directory::new_with_value(
+            name,
+            nodes.iter().map(|node| node.node.clone()).collect(),
+        );
+        Ok(Some(LocatedNode::directory(directory, line, nodes)))
     } else {
         Ok(None)
     }
@@ -71,4 +96,52 @@ fn test() {
     let result = deserialize_node(&data).unwrap();
     let _file =
         RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", result)));
+}
+
+#[test]
+fn test_1() {
+    let data = include_bytes!("../../test_data/keio.oud");
+    let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);
+    let _result = deserialize_node_with_locations(&data).unwrap();
+}
+
+#[test]
+fn located_nodes_keep_their_starting_lines() {
+    let nodes = deserialize_node_with_locations("Root.\r\nName=value\r\n.\r\n").unwrap();
+
+    assert_eq!(nodes[0].line, 1);
+    assert_eq!(nodes[0].children[0].line, 2);
+}
+
+#[test]
+fn unclosed_directory_reports_its_starting_line() {
+    let error = deserialize_node_with_locations("Before=value\r\nRoot.\r\nName=value\r\n")
+        .unwrap_err();
+
+    assert_eq!(error.line, 2);
+    assert_eq!(error.error, Error::ContainerIsNotClosed);
+}
+
+#[test]
+fn located_nodes_have_indexed_paths_for_repeated_names() {
+    let nodes = deserialize_node_with_locations(
+        "Rosen.\r\nEki.\r\nEkimei=A\r\n.\r\nEki.\r\nEkimei=B\r\n.\r\n.\r\n",
+    )
+    .unwrap();
+    let locations = node_locations(&nodes);
+    let paths: Vec<String> = locations
+        .into_iter()
+        .map(|location| location.path.to_string())
+        .collect();
+
+    assert_eq!(
+        paths,
+        vec![
+            "ROOT.Rosen",
+            "ROOT.Rosen.Eki[0]",
+            "ROOT.Rosen.Eki[0].Ekimei",
+            "ROOT.Rosen.Eki[1]",
+            "ROOT.Rosen.Eki[1].Ekimei",
+        ]
+    );
 }
