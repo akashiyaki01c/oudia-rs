@@ -42,6 +42,7 @@ pub fn serialize_oudia(data: &OuDiaFile) -> Vec<u8> {
     match data {
         OuDiaFile::OuDia102(rosen_file_data) => rosen_file_data.to_oudia_bytes(),
         OuDiaFile::OuDiaSecond100(rosen_file_data) => rosen_file_data.to_oudia_bytes(),
+        OuDiaFile::OuDiaSecond101(rosen_file_data) => rosen_file_data.to_oudia_bytes(),
     }
 }
 
@@ -102,6 +103,9 @@ pub fn deserialize_oudia(value: &[u8]) -> Result<OuDiaFile, Error> {
         )),
         "OuDiaSecond.1.00" => Ok(OuDiaFile::OuDiaSecond100(
             crate::model::oudiasecond100::RosenFileData::from_node(&file)?,
+        )),
+        "OuDiaSecond.1.01" => Ok(OuDiaFile::OuDiaSecond101(
+            crate::model::oudiasecond101::RosenFileData::from_node(&file)?,
         )),
         _ => Err(Error::InvalidVersion),
     }
