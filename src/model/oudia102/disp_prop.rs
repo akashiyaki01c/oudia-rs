@@ -72,11 +72,15 @@ impl DisplayProperties {
             // DiaEkimeiFont
             if let Some(Node::Property(font)) = dir.find(KEY_DIA_EKIMEI_FONT) {
                 result.dia_ekimei_font = FontProp::from_str(&font.value)?;
+            } else {
+                return Err(Error::KeyIsNotFound(KEY_DIA_EKIMEI_FONT.to_string()));
             }
 
             // DiaJikokuFont
             if let Some(Node::Property(font)) = dir.find(KEY_DIA_JIKOKU_FONT) {
                 result.dia_jikoku_font = FontProp::from_str(&font.value)?;
+            } else {
+                return Err(Error::KeyIsNotFound(KEY_DIA_JIKOKU_FONT.to_string()));
             }
 
             // DiaRessyaFont
@@ -87,6 +91,8 @@ impl DisplayProperties {
             // CommentFont
             if let Some(Node::Property(font)) = dir.find(KEY_COMMENT_FONT) {
                 result.comment_font = FontProp::from_str(&font.value)?;
+            } else {
+                return Err(Error::KeyIsNotFound(KEY_COMMENT_FONT.to_string()));
             }
 
             // DiaMojiColor

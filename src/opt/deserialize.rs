@@ -1,9 +1,10 @@
 use crate::opt::{
     directory::Directory,
     error::Error,
+    escape::unescape_text,
     node::Node,
     property::Property,
-    source::{collect_locations, LocatedError, LocatedNode, NodeLocation},
+    source::{LocatedError, LocatedNode, NodeLocation, collect_locations},
 };
 
 pub fn deserialize_node(text: &str) -> Result<Vec<Node>, Error> {
@@ -13,7 +14,8 @@ pub fn deserialize_node(text: &str) -> Result<Vec<Node>, Error> {
 }
 
 pub fn deserialize_node_with_locations(text: &str) -> Result<Vec<LocatedNode>, LocatedError> {
-    let lines: Vec<&str> = text.split("\r\n").collect();
+    let text = unescape_text(text.to_string());
+    let lines: Vec<&str> = text.split_terminator("\r\n").collect();
     let mut index = 0;
     let mut nodes = vec![];
     while index < lines.len() {
@@ -77,13 +79,15 @@ pub fn deserialize_node_inner(
             });
         }
 
-        let directory = Directory::new_with_value(
-            name,
-            nodes.iter().map(|node| node.node.clone()).collect(),
-        );
+        let directory =
+            Directory::new_with_value(name, nodes.iter().map(|node| node.node.clone()).collect());
         Ok(Some(LocatedNode::directory(directory, line, nodes)))
     } else {
-        Ok(None)
+        if first_line.is_empty() {
+            Ok(None)
+        } else {
+            Err(LocatedError { error: Error::UnknownStruct, line })
+        }
     }
 }
 
@@ -115,8 +119,8 @@ fn located_nodes_keep_their_starting_lines() {
 
 #[test]
 fn unclosed_directory_reports_its_starting_line() {
-    let error = deserialize_node_with_locations("Before=value\r\nRoot.\r\nName=value\r\n")
-        .unwrap_err();
+    let error =
+        deserialize_node_with_locations("Before=value\r\nRoot.\r\nName=value\r\n").unwrap_err();
 
     assert_eq!(error.line, 2);
     assert_eq!(error.error, Error::ContainerIsNotClosed);

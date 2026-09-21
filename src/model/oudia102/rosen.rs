@@ -32,8 +32,6 @@ impl Rosen {
                 if let Node::Property(rosenmei) = rosenmei {
                     result.rosenmei = rosenmei.value.clone();
                 }
-            } else {
-                return Err(Error::NodeTypeError);
             }
 
             // Eki[]

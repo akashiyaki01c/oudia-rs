@@ -275,7 +275,7 @@ mod tests {
 
     #[test]
     fn diagnostics_point_to_the_parent_for_a_missing_property() {
-        let input = b"FileType=OuDia.1.02\r\nRosen.\r\nRosenmei=Rosen\r\nEki.\r\n.\r\n.\r\n";
+        let input = b"FileType=OuDia.1.02\r\nRosen.\r\nRosenmei=Rosen\r\nDia.\r\n.\r\n.\r\n";
         let error = match deserialize_oudia_with_diagnostics(input) {
             Err(error) => error,
             Ok(_) => panic!("expected a missing property error"),
@@ -284,7 +284,7 @@ mod tests {
         assert_eq!(error.line, Some(4));
         assert_eq!(
             error.path.as_ref().map(ToString::to_string),
-            Some("ROOT.Rosen.Eki".to_string())
+            Some("ROOT.Rosen.Dia".to_string())
         );
         assert!(matches!(error.error, Error::KeyIsNotFound(_)));
     }

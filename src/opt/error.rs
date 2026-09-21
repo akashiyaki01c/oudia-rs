@@ -12,6 +12,8 @@ pub enum Error {
     #[error("ディレクトリが閉じていません。")]
     ContainerIsNotClosed,
     ///
-    #[error("")]
+    #[error("ファイルが空です。")]
     EmptyFile,
+    #[error("未定義の構造")]
+    UnknownStruct,
 }

@@ -37,8 +37,6 @@ impl Station {
                 if let Node::Property(ekimei) = ekimei {
                     result.name = ekimei.value.clone();
                 }
-            } else {
-                return Err(Error::KeyIsNotFound(KEY_EKIMEI.to_string()));
             }
 
             // Ekijikokukeisiki
