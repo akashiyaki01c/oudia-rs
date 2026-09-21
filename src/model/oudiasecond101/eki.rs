@@ -49,25 +49,22 @@ impl Station {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // Ekimei
-            if let Some(ekimei) = dir.find(KEY_EKIMEI) {
-                if let Node::Property(ekimei) = ekimei {
+            if let Some(ekimei) = dir.find(KEY_EKIMEI)
+                && let Node::Property(ekimei) = ekimei {
                     result.name = ekimei.value.clone();
                 }
-            }
 
             // Ekijikokukeisiki
-            if let Some(ekimei) = dir.find(KEY_EKIJIKOKUKEISIKI) {
-                if let Node::Property(ekimei) = ekimei {
+            if let Some(ekimei) = dir.find(KEY_EKIJIKOKUKEISIKI)
+                && let Node::Property(ekimei) = ekimei {
                     result.timetable_display_format = Ekijikokukeisiki::from_str(&ekimei.value)?;
                 }
-            }
 
             // Ekikibo
-            if let Some(ekikibo) = dir.find(KEY_EKIKIBO) {
-                if let Node::Property(ekikibo) = ekikibo {
+            if let Some(ekikibo) = dir.find(KEY_EKIKIBO)
+                && let Node::Property(ekikibo) = ekikibo {
                     result.sta_scale = StationScale::from_str(&ekikibo.value)?;
                 }
-            }
 
             // Kyoukaisen
             if let Some(kyoukaisen) = dir.find(KEY_KYOUKAISEN)

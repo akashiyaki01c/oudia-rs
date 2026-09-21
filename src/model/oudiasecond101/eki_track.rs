@@ -23,18 +23,16 @@ impl EkiTrack {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // TrackName
-            if let Some(name) = dir.find(KEY_TRACK_NAME) {
-                if let Node::Property(name) = name {
+            if let Some(name) = dir.find(KEY_TRACK_NAME)
+                && let Node::Property(name) = name {
                     result.track_name = name.value.clone();
                 }
-            }
 
             // TrackRyakusyou
-            if let Some(ryakusyou) = dir.find(KEY_TRACK_RYAKUSYOU) {
-                if let Node::Property(ryakusyou) = ryakusyou {
+            if let Some(ryakusyou) = dir.find(KEY_TRACK_RYAKUSYOU)
+                && let Node::Property(ryakusyou) = ryakusyou {
                     result.ryakusyou = ryakusyou.value.clone();
                 }
-            }
         } else {
             unreachable!()
         }

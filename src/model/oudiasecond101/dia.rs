@@ -108,13 +108,13 @@ impl Dia {
                 property(KEY_DIA_NAME, &self.name),
                 property(
                     KEY_MAIN_BACK_COLOR_INDEX,
-                    &self.main_back_color_index.to_string(),
+                    self.main_back_color_index.to_string(),
                 ),
                 property(
                     KEY_SUB_BACK_COLOR_INDEX,
-                    &self.sub_back_color_index.to_string(),
+                    self.sub_back_color_index.to_string(),
                 ),
-                property(KEY_BACK_PATTERN_INDEX, &self.back_pattern_index.to_string()),
+                property(KEY_BACK_PATTERN_INDEX, self.back_pattern_index.to_string()),
                 direction(KEY_KUDARI, &self.outbound_trains),
                 direction(KEY_NOBORI, &self.inbound_trains),
             ],
