@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::model::error::Error;
 
 const TOTAL_SECONDS_PER_DAY: usize = 24 * 60 * 60;
@@ -18,7 +20,12 @@ impl Jikoku {
         }
     }
 
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+}
+
+impl FromStr for Jikoku {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value.len() {
             0 => Ok(Self {
                 total_seconds: None,
@@ -112,6 +119,9 @@ impl Jikoku {
         }
     }
 
+}
+
+impl Jikoku {
     pub fn to_oudia_string(self) -> String {
         self.total_seconds
             .map(|total_seconds| {

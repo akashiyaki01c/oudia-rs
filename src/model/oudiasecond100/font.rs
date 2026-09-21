@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, str::FromStr};
 
 use crate::model::error::Error;
 
@@ -25,8 +25,10 @@ pub struct FontProp {
     strike_out: bool,
     escapement: usize,
 }
-impl FontProp {
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+impl FromStr for FontProp {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         let connected_string: HashMap<&str, &str> = value
             .split(";")
             .map(|v| {
@@ -110,6 +112,9 @@ impl FontProp {
         Ok(result)
     }
 
+}
+
+impl FontProp {
     pub fn to_oudia_string(&self) -> String {
         let mut values = Vec::new();
         if self.point_text_height != 0 {

@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
 use crate::{
     model::{error::Error, oudiasecond100::ekijikoku::Ekijikoku},
@@ -139,8 +139,10 @@ pub enum Houkou {
     Nobori,
     Null,
 }
-impl Houkou {
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+impl FromStr for Houkou {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             KEY_KUDARI => Ok(Self::Kudari),
             KEY_NOBORI => Ok(Self::Nobori),
@@ -151,10 +153,13 @@ impl Houkou {
         }
     }
 
-    pub fn to_string(&self) -> String {
+}
+
+impl fmt::Display for Houkou {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            Houkou::Kudari => KEY_KUDARI.to_string(),
-            Houkou::Nobori => KEY_NOBORI.to_string(),
+            Houkou::Kudari => formatter.write_str(KEY_KUDARI),
+            Houkou::Nobori => formatter.write_str(KEY_NOBORI),
             Houkou::Null => unreachable!(),
         }
     }

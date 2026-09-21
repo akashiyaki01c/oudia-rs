@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::{
     model::error::Error,
     opt::{directory::Directory, node::Node, property::Property},
@@ -142,7 +144,12 @@ impl Ekijikokukeisiki {
     const KEY_KUDARI_HATSUCHAKU: &str = "Jikokukeisiki_KudariHatsuchaku";
     const KEY_NOBORI_HATSUCHAKU: &str = "Jikokukeisiki_NoboriHatsuchaku";
 
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+}
+
+impl FromStr for Ekijikokukeisiki {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Err(Error::InvalidEnum {
                 field: "Jikokukeisiki".to_string(),
@@ -161,6 +168,9 @@ impl Ekijikokukeisiki {
         }
     }
 
+}
+
+impl Ekijikokukeisiki {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::DepartureOnly => Self::KEY_HATSU,
@@ -183,7 +193,12 @@ pub enum StationScale {
     Terminal,
 }
 impl StationScale {
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+}
+
+impl FromStr for StationScale {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Err(Error::InvalidEnum {
                 field: "Ekikibo".to_string(),
@@ -198,6 +213,9 @@ impl StationScale {
         }
     }
 
+}
+
+impl StationScale {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::Normal => "Ekikibo_Ippan",
@@ -214,7 +232,12 @@ pub enum DiagramRessyajouhouHyouji {
     Not,
 }
 impl DiagramRessyajouhouHyouji {
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+}
+
+impl FromStr for DiagramRessyajouhouHyouji {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Ok(Self::Origin),
             "DiagramRessyajouhouHyouji_Anytime" => Ok(Self::Anytime),
@@ -226,6 +249,9 @@ impl DiagramRessyajouhouHyouji {
         }
     }
 
+}
+
+impl DiagramRessyajouhouHyouji {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::Origin => "",

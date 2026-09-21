@@ -172,7 +172,12 @@ impl SenStype {
     const KEY_TENSEN: &str = "SenStyle_Tensen";
     const KEY_ITTENSASEN: &str = "SenStyle_Ittensasen";
 
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+}
+
+impl FromStr for SenStype {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Err(Error::InvalidEnum {
                 field: "SenStyle".to_string(),
@@ -189,6 +194,9 @@ impl SenStype {
         }
     }
 
+}
+
+impl SenStype {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::Jissen => Self::KEY_JISSEN,
@@ -212,7 +220,12 @@ impl StopMarkDrawType {
     const KEY_NOTHING: &str = "EStopMarkDrawType_Nothing";
     const KEY_DRAW_ON_PASS: &str = "EStopMarkDrawType_DrawOnPass";
 
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+}
+
+impl FromStr for StopMarkDrawType {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Err(Error::InvalidEnum {
                 field: "EStopMarkDrawType".to_string(),
@@ -228,6 +241,9 @@ impl StopMarkDrawType {
         }
     }
 
+}
+
+impl StopMarkDrawType {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::DrawOnStop => Self::KEY_DRAW_ON_STOP,

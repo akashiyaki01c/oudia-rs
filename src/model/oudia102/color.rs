@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
 use crate::model::error::Error;
 
@@ -24,9 +24,9 @@ impl FromStr for ColorProp {
         Ok(Self { red, green, blue })
     }
 }
-impl ToString for ColorProp {
-    fn to_string(&self) -> String {
-        format!("00{:02X}{:02X}{:02X}", self.red, self.green, self.blue)
+impl fmt::Display for ColorProp {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(formatter, "00{:02X}{:02X}{:02X}", self.red, self.green, self.blue)
     }
 }
 
