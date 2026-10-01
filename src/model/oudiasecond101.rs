@@ -10,6 +10,7 @@ pub mod ressya;
 pub mod ressyasyubetsu;
 pub mod rosen;
 pub mod rosen_file_data;
+pub mod ressya_track;
 
 pub use color::*;
 pub use dia::*;
