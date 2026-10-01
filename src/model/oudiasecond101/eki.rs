@@ -203,31 +203,26 @@ impl Station {
         }
         values.push(property(KEY_DOWN_MAIN, self.down_main.to_string()));
         values.push(property(KEY_UP_MAIN, self.up_main.to_string()));
-        values.push(property(
-            KEY_BRUNCH_CORE_EKI_INDEX,
-            self.brunch_core_eki_index.to_string(),
-        ));
-        values.push(property(
-            KEY_LOOP_ORIGIN_EKI_INDEX,
-            self.loop_irigin_eki_index.to_string(),
-        ));
-        if self.jikokuhyou_track_display_kudari {
+        if self.brunch_core_eki_index != 0 {
             values.push(property(
-                KEY_JIKOKUHYOU_TRACK_DISPLAY_KUDARI,
-                self.jikokuhyou_track_display_kudari.to_string(),
+                KEY_BRUNCH_CORE_EKI_INDEX,
+                self.brunch_core_eki_index.to_string(),
             ));
+        }
+        if self.loop_irigin_eki_index != 0 {
+            values.push(property(
+                KEY_LOOP_ORIGIN_EKI_INDEX,
+                self.loop_irigin_eki_index.to_string(),
+            ));
+        }
+        if self.jikokuhyou_track_display_kudari {
+            values.push(property(KEY_JIKOKUHYOU_TRACK_DISPLAY_KUDARI, "1"));
         }
         if self.jikokuhyou_track_display_nobori {
-            values.push(property(
-                KEY_JIKOKUHYOU_TRACK_DISPLAY_NOBORI,
-                self.jikokuhyou_track_display_nobori.to_string(),
-            ));
+            values.push(property(KEY_JIKOKUHYOU_TRACK_DISPLAY_NOBORI, "1"));
         }
         if self.diagram_track_display {
-            values.push(property(
-                KEY_DIAGRAM_TRACK_DISPLAY,
-                self.diagram_track_display.to_string(),
-            ));
+            values.push(property(KEY_DIAGRAM_TRACK_DISPLAY, "1"));
         }
         if !self.eki_track2_cont.is_empty() {
             values.push(Node::Directory(Directory::new_with_value(

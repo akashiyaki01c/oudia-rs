@@ -1,7 +1,11 @@
 use std::{fmt, str::FromStr};
 
 use crate::{
-    model::{error::Error, oudiasecond101::{ekijikoku::Ekijikoku, ressya_track::RessyaTrack}}, opt::{directory::Directory, node::Node, property::Property},
+    model::{
+        error::Error,
+        oudiasecond101::{ekijikoku::Ekijikoku, ressya_track::RessyaTrack},
+    },
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_RESSYA: &str = "Ressya";
@@ -129,6 +133,16 @@ impl Ressya {
                 .collect::<Vec<_>>()
                 .join(","),
         ));
+        if !self.ressya_track.is_empty() {
+            values.push(property(
+                KEY_RESSYA_TRACK,
+                self.ressya_track
+                    .iter()
+                    .map(RessyaTrack::to_oudia_string)
+                    .collect::<Vec<_>>()
+                    .join(","),
+            ));
+        }
         if !self.bikou.is_empty() {
             values.push(property(KEY_BIKOU, &self.bikou));
         }

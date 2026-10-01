@@ -289,7 +289,7 @@ Newline       ::= "\r\n" ;
 |DiaHaikeiColor|[Color](#color-property) (Property)|Optional|ダイヤグラムの背景表示に使用される色を表します。|
 |*DiaRessyaColor*|[Color](#color-property) (Property)|Optional|ダイヤグラムの列車表示に使用される既定色を表します。(非推奨)|
 |DiaJikuColor|[Color](#color-property)\ (Property)|Optional|ダイヤグラムの軸表示に表示される色を表します。|
-|*JikokuhyouBackColor*|[Color](#color-property)\[\] (Property)|Optional|時刻表上の背景色に使用する色設定を表します。4要素に満たない場合はデフォルト値を代入します。|
+|*JikokuhyouBackColor*|[Color](#color-property)\[4\] (Property)|Optional|時刻表上の背景色に使用する色設定を表します。4要素に満たない場合はデフォルト値を代入します。|
 |*StdOpeTimeLowerColor*|[Color](#color-property)|Optional|基準運転時分より短いときの時刻表上の背景色を表します。|
 |*StdOpeTimeHigherColor*|[Color](#color-property)|Optional|基準運転時分より長いときの時刻表上の背景色を表します。|
 |*StdOpeTimeUndefColor*|[Color](#color-property)|Optional|基準運転時分が未定義のときの時刻表上の背景色を表します。|

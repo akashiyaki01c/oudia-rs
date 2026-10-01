@@ -6,7 +6,7 @@ use crate::model::{error::Error, oudiasecond101::Jikoku};
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct RessyaTrack {
     /// 発着する番線のインデックス
-    track_index: usize,
+    track_index: Option<usize>,
     /// 駅での作業を表す
     sagyou: Sagyou,
 }
@@ -22,10 +22,10 @@ impl FromStr for RessyaTrack {
             // 発着番線のみ
             // {unsigned integer}
             return Ok(RessyaTrack {
-                track_index: value.parse().map_err(|_| Error::InvalidNumber {
+                track_index: Some(value.parse().map_err(|_| Error::InvalidNumber {
                     field: "RessyaTrack".to_string(),
                     value: value.to_string(),
-                })?,
+                })?),
                 sagyou: Sagyou::None,
             });
         }
@@ -57,10 +57,10 @@ impl FromStr for RessyaTrack {
                 }
             };
             return Ok(RessyaTrack {
-                track_index: track.parse().map_err(|_| Error::InvalidNumber {
+                track_index: Some(track.parse().map_err(|_| Error::InvalidNumber {
                     field: "RessyaTrack".to_string(),
                     value: track.to_string(),
-                })?,
+                })?),
                 sagyou,
             });
         }
@@ -103,12 +103,53 @@ impl FromStr for RessyaTrack {
         };
 
         Ok(RessyaTrack {
-            track_index: track.parse().map_err(|_| Error::InvalidNumber {
+            track_index: Some(track.parse().map_err(|_| Error::InvalidNumber {
                 field: "RessyaTrack".to_string(),
                 value: track.to_string(),
-            })?,
+            })?),
             sagyou,
         })
+    }
+}
+
+impl RessyaTrack {
+    pub(crate) fn to_oudia_string(&self) -> String {
+        match &self.sagyou {
+            Sagyou::None => self
+                .track_index
+                .map(|track_index| track_index.to_string())
+                .unwrap_or_default(),
+            Sagyou::Irekae(sagyou) => {
+                let times = match (
+                    sagyou.departure_time.to_oudia_string().is_empty(),
+                    sagyou.arrival_time.to_oudia_string().is_empty(),
+                ) {
+                    (true, true) => String::new(),
+                    (false, true) => format!("${}", sagyou.departure_time.to_oudia_string()),
+                    (true, false) => format!("$/{}", sagyou.arrival_time.to_oudia_string()),
+                    (false, false) => format!(
+                        "${}/{}",
+                        sagyou.departure_time.to_oudia_string(),
+                        sagyou.arrival_time.to_oudia_string()
+                    ),
+                };
+                format!(
+                    "{};1/{}{}",
+                    self.track_index.unwrap_or_default(), sagyou.track_index, times
+                )
+            }
+            Sagyou::Nyusyukku(sagyou) => {
+                if sagyou.unyo_number.is_empty() {
+                    format!("{};2", self.track_index.unwrap_or_default())
+                } else {
+                    format!(
+                        "{};2/{}",
+                        self.track_index.unwrap_or_default(),
+                        sagyou.unyo_number
+                    )
+                }
+            }
+        }
     }
 }
 
