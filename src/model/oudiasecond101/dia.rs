@@ -1,10 +1,13 @@
 use crate::{
-    model::{error::Error, oudiasecond100::Ressya},
+    model::{error::Error, oudiasecond101::Ressya},
     opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_DIA: &str = "Dia";
 const KEY_DIA_NAME: &str = "DiaName";
+const KEY_MAIN_BACK_COLOR_INDEX: &str = "MainBackColorIndex";
+const KEY_SUB_BACK_COLOR_INDEX: &str = "SubBackColorIndex";
+const KEY_BACK_PATTERN_INDEX: &str = "BackPatternIndex";
 const KEY_KUDARI: &str = "Kudari";
 const KEY_NOBORI: &str = "Nobori";
 
@@ -13,6 +16,9 @@ const KEY_NOBORI: &str = "Nobori";
 pub struct Dia {
     /// 時刻表名
     name: String,
+    main_back_color_index: usize,
+    sub_back_color_index: usize,
+    back_pattern_index: usize,
     /// 下り列車のリスト
     outbound_trains: Vec<Ressya>,
     /// 上り列車のリスト
@@ -36,6 +42,33 @@ impl Dia {
                 result.name = dia_name.value.to_string();
             } else {
                 return Err(Error::KeyIsNotFound("DiaName".to_string()));
+            }
+
+            // MainBackColorIndex
+            if let Some(Node::Property(prop)) = dir.find(KEY_MAIN_BACK_COLOR_INDEX) {
+                result.main_back_color_index =
+                    prop.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_MAIN_BACK_COLOR_INDEX.to_string(),
+                        value: prop.value.to_string(),
+                    })?;
+            }
+
+            // SubBackColorIndex
+            if let Some(Node::Property(prop)) = dir.find(KEY_SUB_BACK_COLOR_INDEX) {
+                result.sub_back_color_index =
+                    prop.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_SUB_BACK_COLOR_INDEX.to_string(),
+                        value: prop.value.to_string(),
+                    })?;
+            }
+
+            // BackPatternIndex
+            if let Some(Node::Property(prop)) = dir.find(KEY_BACK_PATTERN_INDEX) {
+                result.back_pattern_index =
+                    prop.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_BACK_PATTERN_INDEX.to_string(),
+                        value: prop.value.to_string(),
+                    })?;
             }
 
             // Kudari
@@ -73,6 +106,15 @@ impl Dia {
             KEY_DIA,
             vec![
                 property(KEY_DIA_NAME, &self.name),
+                property(
+                    KEY_MAIN_BACK_COLOR_INDEX,
+                    self.main_back_color_index.to_string(),
+                ),
+                property(
+                    KEY_SUB_BACK_COLOR_INDEX,
+                    self.sub_back_color_index.to_string(),
+                ),
+                property(KEY_BACK_PATTERN_INDEX, self.back_pattern_index.to_string()),
                 direction(KEY_KUDARI, &self.outbound_trains),
                 direction(KEY_NOBORI, &self.inbound_trains),
             ],

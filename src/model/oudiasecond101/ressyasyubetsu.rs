@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    model::{error::Error, oudiasecond100::color::ColorProp},
+    model::{error::Error, oudiasecond101::color::ColorProp},
     opt::{directory::Directory, node::Node, property::Property},
 };
 
@@ -10,6 +10,7 @@ const KEY_SYUBETSUMEI: &str = "Syubetsumei";
 const KEY_RYAKUSYOU: &str = "Ryakusyou";
 const KEY_JIKOKUHYOU_MOJI_COLOR: &str = "JikokuhyouMojiColor";
 const KEY_JIKOKUHYOU_FONT_INDEX: &str = "JikokuhyouFontIndex";
+const KEY_JIKOKUHYOU_BACK_COLOR: &str = "JikokuhyouBackColor";
 const KEY_DIAGRAM_SEN_COLOR: &str = "DiagramSenColor";
 const KEY_DIAGRAM_SEN_STYLE: &str = "DiagramSenStyle";
 const KEY_DIAGRAM_SEN_IS_BOLD: &str = "DiagramSenIsBold";
@@ -26,6 +27,8 @@ pub struct Ressyasyubetsu {
     jikokuhyou_moji_color: ColorProp,
     /// 時刻表におけるフォントの設定
     jikokuhyou_font_index: usize,
+    /// 時刻表の背景色
+    jikokuhyou_back_color: ColorProp,
     /// ダイヤグラム上の列車線色
     diagram_sen_color: ColorProp,
     /// ダイヤグラム上の列車線種
@@ -84,6 +87,13 @@ impl Ressyasyubetsu {
                     })?;
             }
 
+            // JikokuhyouBackColor
+            if let Some(color) = dir.find(KEY_JIKOKUHYOU_BACK_COLOR)
+                && let Node::Property(color) = color
+            {
+                result.jikokuhyou_back_color = ColorProp::from_str(&color.value)?;
+            }
+
             // DiagramSenColor
             if let Some(color) = dir.find(KEY_DIAGRAM_SEN_COLOR)
                 && let Node::Property(color) = color
@@ -131,6 +141,10 @@ impl Ressyasyubetsu {
             property(
                 KEY_JIKOKUHYOU_FONT_INDEX,
                 self.jikokuhyou_font_index.to_string(),
+            ),
+            property(
+                KEY_JIKOKUHYOU_BACK_COLOR,
+                self.jikokuhyou_back_color.to_string(),
             ),
             property(KEY_DIAGRAM_SEN_COLOR, self.diagram_sen_color.to_string()),
             property(

@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::{
     model::{
         error::Error,
-        oudiasecond100::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
+        oudiasecond101::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
     },
     opt::{directory::Directory, node::Node, property::Property},
 };

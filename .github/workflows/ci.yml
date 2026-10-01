@@ -1,0 +1,43 @@
+name: CI
+
+on:
+    push:
+        branches: ["master", "dev"]
+    pull_request:
+        branches: ["master", "dev"]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    check-and-test:
+        name: Check & Test
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Rust toolchain
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  components: clippy, rustfmt
+
+            - name: Enable Rust cache
+              uses: Swatinem/rust-cache@v2
+
+            - name: Check code formatting
+              run: cargo fmt --all -- --check
+
+            - name: Run Clippy (Linter)
+              run: cargo clippy --all-targets --all-features -- -D warnings
+
+            - name: Run tests
+              run: cargo test --all-targets --all-features
+
+            - name: Build documentation
+              run: cargo doc --no-deps --all-features

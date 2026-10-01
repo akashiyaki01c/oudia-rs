@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::{
     model::{
         error::Error,
-        oudiasecond100::{color::ColorProp, font::FontProp},
+        oudiasecond101::{color::ColorProp, font::FontProp},
     },
     opt::{directory::Directory, node::Node, property::Property},
 };
@@ -19,6 +19,11 @@ const KEY_DIA_MOJI_COLOR: &str = "DiaMojiColor";
 const KEY_DIA_HAIKEI_COLOR: &str = "DiaHaikeiColor";
 const KEY_DIA_RESSYA_COLOR: &str = "DiaRessyaColor";
 const KEY_DIA_JIKU_COLOR: &str = "DiaJikuColor";
+const KEY_JIKOKUHYOU_BACK_COLOR: &str = "JikokuhyouBackColor";
+const KEY_STD_OPE_TIME_LOWER_COLOR: &str = "StdOpeTimeLowerColor";
+const KEY_STD_OPE_TIME_HIGHER_COLOR: &str = "StdOpeTimeHigherColor";
+const KEY_STD_OPE_TIME_UNDEF_COLOR: &str = "StdOpeTimeUndefColor";
+const KEY_STD_OPE_TIME_ILLEGAL_COLOR: &str = "StdOpeTimeIllegalColor";
 const KEY_EKIMEI_LENGTH: &str = "EkimeiLength";
 const KEY_JIKOKUHYOU_RESSYA_WIDTH: &str = "JikokuhyouRessyaWidth";
 const KEY_DIA_RESSYAJOUHOU_HYOUJI_EKI_ORDER_KUDARI: &str = "DiaRessyajouhouHyoujiEkiOrderKudari";
@@ -28,6 +33,7 @@ const KEY_ANY_SECOND_INC_DEC2: &str = "AnySecondIncDec2";
 
 /// 時刻表のフォント設定数
 const JIKOKUHYOUFONT_COUNT: usize = 8;
+const JIKOKUHOU_BACL_COLOR_COUNT: usize = 4;
 
 /// ダイヤグラムファイルの表示設定を表す構造体
 #[derive(Debug, Default, PartialEq, Clone)]
@@ -42,6 +48,11 @@ pub struct DisplayProperties {
     dia_haikei_color: ColorProp,
     dia_ressya_color: ColorProp,
     dia_jiku_color: ColorProp,
+    jikokuhyou_back_color: [ColorProp; JIKOKUHOU_BACL_COLOR_COUNT],
+    std_ope_time_lower_color: ColorProp,
+    std_ope_time_higher_color: ColorProp,
+    std_ope_time_undef_color: ColorProp,
+    std_ope_time_illegal_color: ColorProp,
     ekimei_length: usize,
     jikokuhyou_ressya_width: usize,
     dia_ressyajouhou_hyouji_eki_order_kudari: usize,
@@ -117,6 +128,38 @@ impl DisplayProperties {
             // DiaJikuColor
             if let Some(Node::Property(font)) = dir.find(KEY_DIA_JIKU_COLOR) {
                 result.dia_jiku_color = ColorProp::from_str(&font.value)?;
+            }
+
+            // JikokuhyouBackColor
+            if dir.find_all(KEY_JIKOKUHYOU_BACK_COLOR).is_empty() {
+                return Err(Error::KeyIsNotFound(KEY_JIKOKUHYOU_BACK_COLOR.to_string()));
+            }
+            for (i, color) in dir.find_all(KEY_JIKOKUHYOU_BACK_COLOR).iter().enumerate() {
+                if let Node::Property(font) = color
+                    && let Some(v) = result.jikokuhyou_back_color.get_mut(i)
+                {
+                    *v = ColorProp::from_str(&font.value)?;
+                }
+            }
+
+            // StdOpeTimeLowerColor
+            if let Some(Node::Property(font)) = dir.find(KEY_STD_OPE_TIME_LOWER_COLOR) {
+                result.std_ope_time_lower_color = ColorProp::from_str(&font.value)?;
+            }
+
+            // StdOpeTimeHigherColor
+            if let Some(Node::Property(font)) = dir.find(KEY_STD_OPE_TIME_HIGHER_COLOR) {
+                result.std_ope_time_higher_color = ColorProp::from_str(&font.value)?;
+            }
+
+            // StdOpeTimeUndefColor
+            if let Some(Node::Property(font)) = dir.find(KEY_STD_OPE_TIME_UNDEF_COLOR) {
+                result.std_ope_time_undef_color = ColorProp::from_str(&font.value)?;
+            }
+
+            // StdOpeTimeIllegalColor
+            if let Some(Node::Property(font)) = dir.find(KEY_STD_OPE_TIME_ILLEGAL_COLOR) {
+                result.std_ope_time_illegal_color = ColorProp::from_str(&font.value)?;
             }
 
             // EkimeiLength
@@ -201,24 +244,43 @@ impl DisplayProperties {
             property(KEY_DIA_HAIKEI_COLOR, self.dia_haikei_color.to_string()),
             property(KEY_DIA_RESSYA_COLOR, self.dia_ressya_color.to_string()),
             property(KEY_DIA_JIKU_COLOR, self.dia_jiku_color.to_string()),
+        ]);
+        values.extend(
+            self.jikokuhyou_back_color
+                .iter()
+                .map(|color| property(KEY_JIKOKUHYOU_BACK_COLOR, color.to_string())),
+        );
+        values.extend([
+            property(
+                KEY_STD_OPE_TIME_LOWER_COLOR,
+                self.std_ope_time_lower_color.to_string(),
+            ),
+            property(
+                KEY_STD_OPE_TIME_HIGHER_COLOR,
+                self.std_ope_time_higher_color.to_string(),
+            ),
+            property(
+                KEY_STD_OPE_TIME_UNDEF_COLOR,
+                self.std_ope_time_undef_color.to_string(),
+            ),
+            property(
+                KEY_STD_OPE_TIME_ILLEGAL_COLOR,
+                self.std_ope_time_illegal_color.to_string(),
+            ),
             property(KEY_EKIMEI_LENGTH, self.ekimei_length.to_string()),
             property(
                 KEY_JIKOKUHYOU_RESSYA_WIDTH,
                 self.jikokuhyou_ressya_width.to_string(),
             ),
-        ]);
-        if self.any_second_inc_dec_1 != 0 {
-            values.push(property(
+            property(
                 KEY_ANY_SECOND_INC_DEC1,
                 self.any_second_inc_dec_1.to_string(),
-            ));
-        }
-        if self.any_second_inc_dec_2 != 0 {
-            values.push(property(
+            ),
+            property(
                 KEY_ANY_SECOND_INC_DEC2,
                 self.any_second_inc_dec_2.to_string(),
-            ));
-        }
+            ),
+        ]);
         Node::Directory(Directory::new_with_value(KEY_DISP_PROP, values))
     }
 }

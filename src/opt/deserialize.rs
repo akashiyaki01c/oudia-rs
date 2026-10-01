@@ -86,7 +86,10 @@ pub fn deserialize_node_inner(
         if first_line.is_empty() {
             Ok(None)
         } else {
-            Err(LocatedError { error: Error::UnknownStruct, line })
+            Err(LocatedError {
+                error: Error::UnknownStruct,
+                line,
+            })
         }
     }
 }
@@ -95,7 +98,7 @@ pub fn deserialize_node_inner(
 fn test() {
     use crate::model::oudia102::rosen_file_data::RosenFileData;
 
-    let data = include_bytes!("../../test_data/keio.oud");
+    let data = include_bytes!("../../test_data/OuDia102.oud");
     let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);
     let result = deserialize_node(&data).unwrap();
     let _file =
@@ -104,7 +107,7 @@ fn test() {
 
 #[test]
 fn test_1() {
-    let data = include_bytes!("../../test_data/keio.oud");
+    let data = include_bytes!("../../test_data/OuDia102.oud");
     let (data, _, _) = encoding_rs::SHIFT_JIS.decode(data);
     let _result = deserialize_node_with_locations(&data).unwrap();
 }

@@ -1,5 +1,11 @@
+use std::str::FromStr;
+
 use crate::{
-    model::{error::Error, oudia102::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu}}, opt::{directory::Directory, node::Node, property::Property},
+    model::{
+        error::Error,
+        oudia102::{dia::Dia, eki::Station, jikoku::Jikoku, ressyasyubetsu::Ressyasyubetsu},
+    },
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 /// 路線を表す構造体
@@ -28,10 +34,10 @@ impl Rosen {
             return Err(Error::NodeTypeError);
         } else if let Node::Directory(dir) = node {
             // Rosenmei
-            if let Some(rosenmei) = dir.find("Rosenmei") {
-                if let Node::Property(rosenmei) = rosenmei {
-                    result.rosenmei = rosenmei.value.clone();
-                }
+            if let Some(rosenmei) = dir.find("Rosenmei")
+                && let Node::Property(rosenmei) = rosenmei
+            {
+                result.rosenmei = rosenmei.value.clone();
             }
 
             // Eki[]
@@ -61,13 +67,14 @@ impl Rosen {
             if let Some(zahyou_kyori) = dir.find("DiagramDgrYZahyouKyoriDefault")
                 && let Node::Property(zahyou_kyori) = zahyou_kyori
             {
-                result.diagram_dgr_y_zahyou_kyori_default = zahyou_kyori
-                    .value
-                    .parse()
-                    .map_err(|_| Error::InvalidNumber {
-                        field: "DiagramDgrYZahyouKyoriDefault".to_string(),
-                        value: zahyou_kyori.value.to_string(),
-                    })?
+                result.diagram_dgr_y_zahyou_kyori_default =
+                    zahyou_kyori
+                        .value
+                        .parse()
+                        .map_err(|_| Error::InvalidNumber {
+                            field: "DiagramDgrYZahyouKyoriDefault".to_string(),
+                            value: zahyou_kyori.value.to_string(),
+                        })?
             }
 
             // Comment

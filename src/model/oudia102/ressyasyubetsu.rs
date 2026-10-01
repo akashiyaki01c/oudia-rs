@@ -1,7 +1,8 @@
 use std::str::FromStr;
 
 use crate::{
-    model::{error::Error, oudia102::color::ColorProp}, opt::{directory::Directory, node::Node, property::Property},
+    model::{error::Error, oudia102::color::ColorProp},
+    opt::{directory::Directory, node::Node, property::Property},
 };
 
 const KEY_RESSYASYUBETSU: &str = "Ressyasyubetsu";
@@ -76,10 +77,11 @@ impl Ressyasyubetsu {
             if let Some(index) = dir.find(KEY_JIKOKUHYOU_FONT_INDEX)
                 && let Node::Property(index) = index
             {
-                result.jikokuhyou_font_index = index.value.parse().map_err(|_| Error::InvalidNumber {
-                    field: KEY_JIKOKUHYOU_FONT_INDEX.to_string(),
-                    value: index.value.to_string(),
-                })?;
+                result.jikokuhyou_font_index =
+                    index.value.parse().map_err(|_| Error::InvalidNumber {
+                        field: KEY_JIKOKUHYOU_FONT_INDEX.to_string(),
+                        value: index.value.to_string(),
+                    })?;
             }
 
             // DiagramSenColor
@@ -169,8 +171,12 @@ impl SenStype {
     const KEY_HASEN: &str = "SenStyle_Hasen";
     const KEY_TENSEN: &str = "SenStyle_Tensen";
     const KEY_ITTENSASEN: &str = "SenStyle_Ittensasen";
+}
 
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+impl FromStr for SenStype {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Err(Error::InvalidEnum {
                 field: "SenStyle".to_string(),
@@ -186,7 +192,9 @@ impl SenStype {
             }),
         }
     }
+}
 
+impl SenStype {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::Jissen => Self::KEY_JISSEN,
@@ -209,8 +217,12 @@ impl StopMarkDrawType {
     const KEY_DRAW_ON_STOP: &str = "EStopMarkDrawType_DrawOnStop";
     const KEY_NOTHING: &str = "EStopMarkDrawType_Nothing";
     const KEY_DRAW_ON_PASS: &str = "EStopMarkDrawType_DrawOnPass";
+}
 
-    pub fn from_str(value: &str) -> Result<Self, Error> {
+impl FromStr for StopMarkDrawType {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
             "" => Err(Error::InvalidEnum {
                 field: "EStopMarkDrawType".to_string(),
@@ -225,7 +237,9 @@ impl StopMarkDrawType {
             }),
         }
     }
+}
 
+impl StopMarkDrawType {
     fn to_oudia_string(&self) -> &'static str {
         match self {
             Self::DrawOnStop => Self::KEY_DRAW_ON_STOP,

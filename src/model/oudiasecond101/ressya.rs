@@ -1,7 +1,10 @@
 use std::{fmt, str::FromStr};
 
 use crate::{
-    model::{error::Error, oudiasecond100::ekijikoku::Ekijikoku},
+    model::{
+        error::Error,
+        oudiasecond101::{ekijikoku::Ekijikoku, ressya_track::RessyaTrack},
+    },
     opt::{directory::Directory, node::Node, property::Property},
 };
 
@@ -12,6 +15,7 @@ const KEY_RESSYABANGOU: &str = "Ressyabangou";
 const KEY_RESSYAMEI: &str = "Ressyamei";
 const KEY_GOSUU: &str = "Gosuu";
 const KEY_EKI_JIKOKU: &str = "EkiJikoku";
+const KEY_RESSYA_TRACK: &str = "RessyaTrack";
 const KEY_BIKOU: &str = "Bikou";
 
 /// 1つの列車を表す構造体
@@ -29,6 +33,8 @@ pub struct Ressya {
     gousuu: String,
     /// 駅時刻のリスト
     ekijikoku: Vec<Ekijikoku>,
+    /// 発着番線の一覧
+    ressya_track: Vec<RessyaTrack>,
     /// 備考
     bikou: String,
 }
@@ -81,6 +87,16 @@ impl Ressya {
                 result.ekijikoku = ekijikoku?;
             }
 
+            // RessyaTrack
+            if let Some(Node::Property(ressya_track)) = dir.find(KEY_RESSYA_TRACK) {
+                let ressya_track: Result<Vec<RessyaTrack>, Error> = ressya_track
+                    .value
+                    .split(",")
+                    .map(RessyaTrack::from_str)
+                    .collect();
+                result.ressya_track = ressya_track?;
+            }
+
             // Bikou
             if let Some(Node::Property(bikou)) = dir.find(KEY_BIKOU) {
                 result.bikou = bikou.value.to_string();
@@ -117,6 +133,16 @@ impl Ressya {
                 .collect::<Vec<_>>()
                 .join(","),
         ));
+        if !self.ressya_track.is_empty() {
+            values.push(property(
+                KEY_RESSYA_TRACK,
+                self.ressya_track
+                    .iter()
+                    .map(RessyaTrack::to_oudia_string)
+                    .collect::<Vec<_>>()
+                    .join(","),
+            ));
+        }
         if !self.bikou.is_empty() {
             values.push(property(KEY_BIKOU, &self.bikou));
         }
