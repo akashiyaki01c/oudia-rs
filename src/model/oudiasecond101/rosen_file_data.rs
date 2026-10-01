@@ -6,7 +6,8 @@ use crate::{
     opt::{directory::Directory, node::Node, property::Property, serialize::serialize_node},
 };
 
-const FILE_TYPE_VERSION: &str = "OuDiaSecond.1.01";
+const FILE_TYPE_VERSION_101: &str = "OuDiaSecond.1.01";
+const FILE_TYPE_VERSION_102: &str = "OuDiaSecond.1.02";
 const KEY_FILE_TYPE: &str = "FileType";
 const KEY_ROSEN: &str = "Rosen";
 const KEY_DISP_PROP: &str = "DispProp";
@@ -33,7 +34,7 @@ impl RosenFileData {
             let Some(Node::Property(version)) = dir.find(KEY_FILE_TYPE) else {
                 return Err(Error::InvalidVersion);
             };
-            if version.value != FILE_TYPE_VERSION {
+            if version.value != FILE_TYPE_VERSION_101 && version.value != FILE_TYPE_VERSION_102 {
                 return Err(Error::InvalidVersion);
             }
 
@@ -70,7 +71,7 @@ impl RosenFileData {
             vec![
                 Node::Property(Property::new_with_value(
                     KEY_FILE_TYPE,
-                    FILE_TYPE_VERSION.to_string(),
+                    FILE_TYPE_VERSION_102.to_string(),
                 )),
                 self.rosen.to_node(),
                 self.disp_prop.to_node(),
@@ -153,7 +154,7 @@ mod tests {
 
     #[test]
     fn oudia_text_can_be_read_after_writing() {
-        let data = include_bytes!("../../../test_data/keio.oud");
+        let data = include_bytes!("../../../test_data/OuDiaSecond101.oud2");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
         let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value(

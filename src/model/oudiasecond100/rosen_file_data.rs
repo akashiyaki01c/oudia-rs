@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     fn oudia_text_can_be_read_after_writing() {
-        let data = include_bytes!("../../../test_data/keio.oud");
+        let data = include_bytes!("../../../test_data/OuDiaSecond100.oud2");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
         let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
