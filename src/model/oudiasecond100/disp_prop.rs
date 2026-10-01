@@ -206,15 +206,19 @@ impl DisplayProperties {
                 KEY_JIKOKUHYOU_RESSYA_WIDTH,
                 self.jikokuhyou_ressya_width.to_string(),
             ),
-            property(
+        ]);
+        if self.any_second_inc_dec_1 != 0 {
+            values.push(property(
                 KEY_ANY_SECOND_INC_DEC1,
                 self.any_second_inc_dec_1.to_string(),
-            ),
-            property(
+            ));
+        }
+        if self.any_second_inc_dec_2 != 0 {
+            values.push(property(
                 KEY_ANY_SECOND_INC_DEC2,
                 self.any_second_inc_dec_2.to_string(),
-            ),
-        ]);
+            ));
+        }
         Node::Directory(Directory::new_with_value(KEY_DISP_PROP, values))
     }
 }

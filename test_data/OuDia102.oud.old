@@ -4927,12 +4927,39 @@ JikokuhyouVFont=PointTextHeight=9;Facename=@‚r‚g ‚f30-M
 DiaEkimeiFont=PointTextHeight=9;Facename=‚r‚g ‚f30-M
 DiaJikokuFont=PointTextHeight=9;Facename=‚r‚g ‚f30-M
 DiaRessyaFont=PointTextHeight=9;Facename=‚r‚g ‚f30-M
+OperationTableFont=PointTextHeight=9;Facename=Meiryo UI
+AllOperationTableJikokuFont=PointTextHeight=8;Facename=Meiryo UI
 CommentFont=PointTextHeight=9;Facename=‚r‚g ‚f30-M
 DiaMojiColor=00000000
-DiaHaikeiColor=00000000
+DiaBackColor=00FFFFFF
+DiaBackColor=00FFFFFF
+DiaBackColor=00FFFFFF
+DiaBackColor=00FFFFFF
+DiaBackColor=00FFFFFF
 DiaRessyaColor=00FFFFFF
 DiaJikuColor=00C0C0C0
+JikokuhyouBackColor=00FFFFFF
+JikokuhyouBackColor=00F0F0F0
+JikokuhyouBackColor=00FFFFFF
+JikokuhyouBackColor=00FFFFFF
+StdOpeTimeLowerColor=00E0E0FF
+StdOpeTimeHigherColor=00FFFFE0
+StdOpeTimeUndefColor=0080FFFF
+StdOpeTimeIllegalColor=00A0A0A0
+OperationStringColor=00000000
+OperationGridColor=00000000
 EkimeiLength=5
 JikokuhyouRessyaWidth=6
+AnySecondIncDec1=5
+AnySecondIncDec2=15
+DisplayRessyamei=1
+DisplayOuterTerminalEkimeiOriginSide=0
+DisplayOuterTerminalEkimeiTerminalSide=0
+DiagramDisplayOuterTerminal=0
+SecondRoundChaku=0
+SecondRoundHatsu=0
+Display2400=0
+OperationNumberRows=1
+DisplayInOutLinkCode=0
 .
-FileTypeAppComment=OuDia Ver. 1.02.05
+FileTypeAppComment=OuDiaSecondV2 Ver. 2.06.03

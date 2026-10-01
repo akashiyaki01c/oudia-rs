@@ -229,8 +229,11 @@ impl Station {
                 self.diagram_track_display.to_string(),
             ));
         }
-        for track in self.eki_track2_cont.iter() {
-            values.push(track.to_node());
+        if !self.eki_track2_cont.is_empty() {
+            values.push(Node::Directory(Directory::new_with_value(
+                KEY_EKI_TRACK2_CONT,
+                self.eki_track2_cont.iter().map(EkiTrack::to_node).collect(),
+            )));
         }
         Node::Directory(Directory::new_with_value(KEY_EKI, values))
     }

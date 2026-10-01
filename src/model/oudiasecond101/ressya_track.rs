@@ -14,6 +14,10 @@ impl FromStr for RessyaTrack {
     type Err = Error;
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
+        if value.is_empty() {
+            return Ok(Self::default());
+        }
+
         if !value.contains(";") {
             // 発着番線のみ
             // {unsigned integer}
@@ -161,5 +165,10 @@ mod tests {
         let result: RessyaTrack = "3;2/unyo1".parse().unwrap();
 
         assert!(matches!(result.sagyou, Sagyou::Nyusyukku(_)));
+    }
+
+    #[test]
+    fn parses_an_empty_track() {
+        assert_eq!("".parse::<RessyaTrack>().unwrap(), RessyaTrack::default());
     }
 }
