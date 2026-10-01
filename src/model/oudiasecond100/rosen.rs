@@ -35,9 +35,10 @@ impl Rosen {
         } else if let Node::Directory(dir) = node {
             // Rosenmei
             if let Some(rosenmei) = dir.find("Rosenmei")
-                && let Node::Property(rosenmei) = rosenmei {
-                    result.rosenmei = rosenmei.value.clone();
-                }
+                && let Node::Property(rosenmei) = rosenmei
+            {
+                result.rosenmei = rosenmei.value.clone();
+            }
 
             // Eki[]
             for node in dir.find_all("Eki") {

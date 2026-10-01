@@ -26,7 +26,11 @@ impl FromStr for ColorProp {
 }
 impl fmt::Display for ColorProp {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "00{:02X}{:02X}{:02X}", self.red, self.green, self.blue)
+        write!(
+            formatter,
+            "00{:02X}{:02X}{:02X}",
+            self.red, self.green, self.blue
+        )
     }
 }
 

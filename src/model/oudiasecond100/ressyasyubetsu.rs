@@ -171,7 +171,6 @@ impl SenStype {
     const KEY_HASEN: &str = "SenStyle_Hasen";
     const KEY_TENSEN: &str = "SenStyle_Tensen";
     const KEY_ITTENSASEN: &str = "SenStyle_Ittensasen";
-
 }
 
 impl FromStr for SenStype {
@@ -193,7 +192,6 @@ impl FromStr for SenStype {
             }),
         }
     }
-
 }
 
 impl SenStype {
@@ -219,7 +217,6 @@ impl StopMarkDrawType {
     const KEY_DRAW_ON_STOP: &str = "EStopMarkDrawType_DrawOnStop";
     const KEY_NOTHING: &str = "EStopMarkDrawType_Nothing";
     const KEY_DRAW_ON_PASS: &str = "EStopMarkDrawType_DrawOnPass";
-
 }
 
 impl FromStr for StopMarkDrawType {
@@ -240,7 +237,6 @@ impl FromStr for StopMarkDrawType {
             }),
         }
     }
-
 }
 
 impl StopMarkDrawType {

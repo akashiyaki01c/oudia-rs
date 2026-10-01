@@ -36,21 +36,24 @@ impl Station {
         } else if let Node::Directory(dir) = node {
             // Ekimei
             if let Some(ekimei) = dir.find(KEY_EKIMEI)
-                && let Node::Property(ekimei) = ekimei {
-                    result.name = ekimei.value.clone();
-                }
+                && let Node::Property(ekimei) = ekimei
+            {
+                result.name = ekimei.value.clone();
+            }
 
             // Ekijikokukeisiki
             if let Some(ekimei) = dir.find(KEY_EKIJIKOKUKEISIKI)
-                && let Node::Property(ekimei) = ekimei {
-                    result.timetable_display_format = Ekijikokukeisiki::from_str(&ekimei.value)?;
-                }
+                && let Node::Property(ekimei) = ekimei
+            {
+                result.timetable_display_format = Ekijikokukeisiki::from_str(&ekimei.value)?;
+            }
 
             // Ekikibo
             if let Some(ekikibo) = dir.find(KEY_EKIKIBO)
-                && let Node::Property(ekikibo) = ekikibo {
-                    result.sta_scale = StationScale::from_str(&ekikibo.value)?;
-                }
+                && let Node::Property(ekikibo) = ekikibo
+            {
+                result.sta_scale = StationScale::from_str(&ekikibo.value)?;
+            }
 
             // Kyoukaisen
             if let Some(kyoukaisen) = dir.find(KEY_KYOUKAISEN)
@@ -143,7 +146,6 @@ impl Ekijikokukeisiki {
     const KEY_NOBORI_CHAKU: &str = "Jikokukeisiki_NoboriChaku";
     const KEY_KUDARI_HATSUCHAKU: &str = "Jikokukeisiki_KudariHatsuchaku";
     const KEY_NOBORI_HATSUCHAKU: &str = "Jikokukeisiki_NoboriHatsuchaku";
-
 }
 
 impl FromStr for Ekijikokukeisiki {
@@ -167,7 +169,6 @@ impl FromStr for Ekijikokukeisiki {
             }),
         }
     }
-
 }
 
 impl Ekijikokukeisiki {
@@ -192,8 +193,7 @@ pub enum StationScale {
     /// 主要駅
     Terminal,
 }
-impl StationScale {
-}
+impl StationScale {}
 
 impl FromStr for StationScale {
     type Err = Error;
@@ -212,7 +212,6 @@ impl FromStr for StationScale {
             }),
         }
     }
-
 }
 
 impl StationScale {
@@ -231,8 +230,7 @@ pub enum DiagramRessyajouhouHyouji {
     Anytime,
     Not,
 }
-impl DiagramRessyajouhouHyouji {
-}
+impl DiagramRessyajouhouHyouji {}
 
 impl FromStr for DiagramRessyajouhouHyouji {
     type Err = Error;
@@ -248,7 +246,6 @@ impl FromStr for DiagramRessyajouhouHyouji {
             }),
         }
     }
-
 }
 
 impl DiagramRessyajouhouHyouji {

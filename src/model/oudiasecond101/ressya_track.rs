@@ -135,7 +135,9 @@ impl RessyaTrack {
                 };
                 format!(
                     "{};1/{}{}",
-                    self.track_index.unwrap_or_default(), sagyou.track_index, times
+                    self.track_index.unwrap_or_default(),
+                    sagyou.track_index,
+                    times
                 )
             }
             Sagyou::Nyusyukku(sagyou) => {

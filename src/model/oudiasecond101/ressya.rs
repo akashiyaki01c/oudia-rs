@@ -178,7 +178,6 @@ impl FromStr for Houkou {
             }),
         }
     }
-
 }
 
 impl fmt::Display for Houkou {

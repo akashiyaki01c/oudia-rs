@@ -19,7 +19,6 @@ impl Jikoku {
                 .map(|total_seconds| total_seconds % TOTAL_SECONDS_PER_DAY),
         }
     }
-
 }
 
 impl FromStr for Jikoku {
@@ -118,7 +117,6 @@ impl FromStr for Jikoku {
             }),
         }
     }
-
 }
 
 impl Jikoku {

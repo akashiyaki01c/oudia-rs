@@ -134,11 +134,9 @@ mod tests {
         let data = include_bytes!("../../../test_data/OuDia102.oud");
         let (text, _, _) = encoding_rs::SHIFT_JIS.decode(data);
         let nodes = deserialize_node(&text).unwrap();
-        let file = RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
-            "ROOT",
-            nodes,
-        )))
-        .unwrap();
+        let file =
+            RosenFileData::from_node(&Node::Directory(Directory::new_with_value("ROOT", nodes)))
+                .unwrap();
 
         let written = file.to_oudia_string();
         assert_eq!(text, written);
@@ -150,4 +148,3 @@ mod tests {
         .unwrap();
     }
 }
-

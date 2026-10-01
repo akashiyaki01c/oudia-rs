@@ -111,7 +111,6 @@ impl FromStr for FontProp {
 
         Ok(result)
     }
-
 }
 
 impl FontProp {
