@@ -248,3 +248,151 @@ impl StopMarkDrawType {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{Ressyasyubetsu, SenStype, StopMarkDrawType};
+    use crate::{
+        model::error::Error,
+        opt::{directory::Directory, node::Node, property::Property},
+    };
+    use std::str::FromStr;
+
+    #[test]
+    fn parses_all_diagram_line_styles() {
+        for (value, expected) in [
+            ("SenStyle_Jissen", SenStype::Jissen),
+            ("SenStyle_Hasen", SenStype::Hasen),
+            ("SenStyle_Tensen", SenStype::Tensen),
+            ("SenStyle_Ittensasen", SenStype::Ittensasen),
+        ] {
+            assert_eq!(SenStype::from_str(value).unwrap(), expected);
+        }
+        assert!(matches!(
+            SenStype::from_str(""),
+            Err(Error::InvalidEnum { .. })
+        ));
+        assert!(matches!(
+            SenStype::from_str("unknown"),
+            Err(Error::InvalidEnum { .. })
+        ));
+    }
+
+    #[test]
+    fn parses_all_stop_mark_types() {
+        for (value, expected) in [
+            ("EStopMarkDrawType_DrawOnStop", StopMarkDrawType::DrawOnStop),
+            ("EStopMarkDrawType_Nothing", StopMarkDrawType::Nothing),
+            ("EStopMarkDrawType_DrawOnPass", StopMarkDrawType::DrawOnPass),
+        ] {
+            assert_eq!(StopMarkDrawType::from_str(value).unwrap(), expected);
+        }
+        assert!(matches!(
+            StopMarkDrawType::from_str(""),
+            Err(Error::InvalidEnum { .. })
+        ));
+        assert!(matches!(
+            StopMarkDrawType::from_str("unknown"),
+            Err(Error::InvalidEnum { .. })
+        ));
+    }
+
+    #[test]
+    fn parses_and_writes_all_train_type_properties() {
+        let node = Node::Directory(Directory::new_with_value(
+            "Ressyasyubetsu",
+            vec![
+                Node::Property(Property::new_with_value("Syubetsumei", "Local".to_string())),
+                Node::Property(Property::new_with_value("Ryakusyou", "L".to_string())),
+                Node::Property(Property::new_with_value(
+                    "JikokuhyouMojiColor",
+                    "00112233".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "JikokuhyouFontIndex",
+                    "2".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "DiagramSenColor",
+                    "00445566".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "DiagramSenStyle",
+                    "SenStyle_Hasen".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "DiagramSenIsBold",
+                    "1".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "StopMarkDrawType",
+                    "EStopMarkDrawType_DrawOnPass".to_string(),
+                )),
+            ],
+        ));
+        let train_type = Ressyasyubetsu::from_node(&node).unwrap();
+
+        assert_eq!(train_type.to_node(), node);
+    }
+
+    #[test]
+    fn rejects_invalid_train_type_properties() {
+        assert!(matches!(
+            Ressyasyubetsu::from_node(&Node::Property(Property::new_with_value(
+                "Ressyasyubetsu",
+                String::new()
+            ))),
+            Err(Error::NodeTypeError)
+        ));
+        assert!(matches!(
+            Ressyasyubetsu::from_node(&Node::Directory(Directory::new_with_value(
+                "Ressyasyubetsu",
+                vec![]
+            ))),
+            Err(Error::KeyIsNotFound(_))
+        ));
+        assert!(matches!(
+            Ressyasyubetsu::from_node(&Node::Directory(Directory::new_with_value(
+                "Ressyasyubetsu",
+                vec![Node::Property(Property::new_with_value(
+                    "Syubetsumei",
+                    String::new()
+                ))]
+            ))),
+            Err(Error::InvalidValue(_, _))
+        ));
+        assert!(matches!(
+            Ressyasyubetsu::from_node(&Node::Directory(Directory::new_with_value(
+                "Ressyasyubetsu",
+                vec![Node::Directory(Directory::new_with_value(
+                    "Syubetsumei",
+                    vec![]
+                ))]
+            ))),
+            Err(Error::NodeTypeError)
+        ));
+
+        let base = vec![Node::Property(Property::new_with_value(
+            "Syubetsumei",
+            "Local".to_string(),
+        ))];
+        for (key, value) in [
+            ("JikokuhyouFontIndex", "invalid"),
+            ("DiagramSenStyle", "invalid"),
+            ("StopMarkDrawType", "invalid"),
+        ] {
+            let mut values = base.clone();
+            values.push(Node::Property(Property::new_with_value(
+                key,
+                value.to_string(),
+            )));
+            assert!(matches!(
+                Ressyasyubetsu::from_node(&Node::Directory(Directory::new_with_value(
+                    "Ressyasyubetsu",
+                    values
+                ))),
+                Err(Error::InvalidNumber { .. }) | Err(Error::InvalidEnum { .. })
+            ));
+        }
+    }
+}

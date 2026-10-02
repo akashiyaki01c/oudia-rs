@@ -192,3 +192,95 @@ impl DisplayProperties {
 fn property(name: &str, value: impl Into<String>) -> Node {
     Node::Property(Property::new_with_value(name, value.into()))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::DisplayProperties;
+    use crate::{
+        model::error::Error,
+        opt::{directory::Directory, node::Node, property::Property},
+    };
+
+    fn property(name: &str, value: &str) -> Node {
+        Node::Property(Property::new_with_value(name, value.to_string()))
+    }
+
+    fn valid_values() -> Vec<Node> {
+        let mut values = (0..8)
+            .map(|_| property("JikokuhyouFont", "Facename=Meiryo"))
+            .collect::<Vec<_>>();
+        values.extend([
+            property("JikokuhyouVFont", "Facename=Meiryo"),
+            property("DiaEkimeiFont", "Facename=Meiryo"),
+            property("DiaJikokuFont", "Facename=Meiryo"),
+            property("DiaRessyaFont", "Facename=Meiryo"),
+            property("CommentFont", "Facename=Meiryo"),
+            property("DiaMojiColor", "00112233"),
+            property("DiaHaikeiColor", "00445566"),
+            property("DiaRessyaColor", "00778899"),
+            property("DiaJikuColor", "00AABBCC"),
+            property("EkimeiLength", "10"),
+            property("JikokuhyouRessyaWidth", "11"),
+            property("DiaRessyajouhouHyoujiEkiOrderKudari", "12"),
+            property("DiaRessyajouhouHyoujiEkiOrderNobori", "13"),
+        ]);
+        values
+    }
+
+    fn node(values: Vec<Node>) -> Node {
+        Node::Directory(Directory::new_with_value("DispProp", values))
+    }
+
+    #[test]
+    fn parses_and_writes_all_display_properties() {
+        let display_properties = DisplayProperties::from_node(&node(valid_values())).unwrap();
+
+        assert!(matches!(display_properties.to_node(), Node::Directory(_)));
+    }
+
+    #[test]
+    fn rejects_missing_display_property_keys() {
+        assert!(matches!(
+            DisplayProperties::from_node(&Node::Property(Property::new_with_value(
+                "DispProp",
+                String::new()
+            ))),
+            Err(Error::NodeTypeError)
+        ));
+        assert!(matches!(
+            DisplayProperties::from_node(&node(vec![])),
+            Err(Error::KeyIsNotFound(_))
+        ));
+
+        for key in ["DiaEkimeiFont", "DiaJikokuFont", "CommentFont"] {
+            let values = valid_values()
+                .into_iter()
+                .filter(|value| value.get_name() != key)
+                .collect();
+            assert!(matches!(
+                DisplayProperties::from_node(&node(values)),
+                Err(Error::KeyIsNotFound(_))
+            ));
+        }
+    }
+
+    #[test]
+    fn rejects_invalid_display_property_numbers() {
+        for key in [
+            "EkimeiLength",
+            "JikokuhyouRessyaWidth",
+            "DiaRessyajouhouHyoujiEkiOrderKudari",
+            "DiaRessyajouhouHyoujiEkiOrderNobori",
+        ] {
+            let mut values = valid_values()
+                .into_iter()
+                .filter(|value| value.get_name() != key)
+                .collect::<Vec<_>>();
+            values.push(property(key, "invalid"));
+            assert!(matches!(
+                DisplayProperties::from_node(&node(values)),
+                Err(Error::InvalidNumber { .. })
+            ));
+        }
+    }
+}

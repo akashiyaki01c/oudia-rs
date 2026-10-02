@@ -127,7 +127,12 @@ pub enum FileType {
 #[cfg(test)]
 mod tests {
     use super::RosenFileData;
-    use crate::opt::{deserialize::deserialize_node, directory::Directory, node::Node};
+    use crate::{
+        model::error::Error,
+        opt::{
+            deserialize::deserialize_node, directory::Directory, node::Node, property::Property,
+        },
+    };
 
     #[test]
     fn oudia_text_can_be_read_after_writing() {
@@ -140,11 +145,50 @@ mod tests {
 
         let written = file.to_oudia_string();
         assert_eq!(text, written);
+        assert_eq!(file.to_oudia_bytes(), data);
         let written_nodes = deserialize_node(&written).unwrap();
         RosenFileData::from_node(&Node::Directory(Directory::new_with_value(
             "ROOT",
             written_nodes,
         )))
         .unwrap();
+    }
+
+    fn property(name: &str, value: &str) -> Node {
+        Node::Property(Property::new_with_value(name, value.to_string()))
+    }
+
+    fn directory(values: Vec<Node>) -> Node {
+        Node::Directory(Directory::new_with_value("ROOT", values))
+    }
+
+    #[test]
+    fn rejects_invalid_file_headers_and_missing_sections() {
+        assert!(matches!(
+            RosenFileData::from_node(&Node::Property(Property::new_with_value(
+                "ROOT",
+                String::new()
+            ))),
+            Err(Error::NodeTypeError)
+        ));
+        assert!(matches!(
+            RosenFileData::from_node(&directory(vec![])),
+            Err(Error::InvalidVersion)
+        ));
+        assert!(matches!(
+            RosenFileData::from_node(&directory(vec![property("FileType", "wrong")])),
+            Err(Error::InvalidVersion)
+        ));
+        assert!(matches!(
+            RosenFileData::from_node(&directory(vec![property("FileType", "OuDia.1.02")])),
+            Err(Error::KeyIsNotFound(_))
+        ));
+        assert!(matches!(
+            RosenFileData::from_node(&directory(vec![
+                property("FileType", "OuDia.1.02"),
+                Node::Directory(Directory::new_with_value("Rosen", vec![])),
+            ])),
+            Err(Error::KeyIsNotFound(_))
+        ));
     }
 }

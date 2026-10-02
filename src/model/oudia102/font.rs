@@ -153,3 +153,66 @@ impl FontProp {
         values.join(";")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::FontProp;
+    use crate::model::error::Error;
+    use std::str::FromStr;
+
+    #[test]
+    fn parses_and_writes_all_font_properties() {
+        let value = "PointTextHeight=12;LogicalunitTextHeight=13;LogicalunitCellHeight=14;Facename=Meiryo;Bold=1;Itaric=1;Underline=1;StrikeOut=1;Escapement=2";
+        let font = FontProp::from_str(value).unwrap();
+
+        assert_eq!(font.to_oudia_string(), value);
+        assert_eq!(FontProp::from_str(&font.to_oudia_string()).unwrap(), font);
+    }
+
+    #[test]
+    fn defaults_optional_font_properties() {
+        let font = FontProp::from_str("Facename=Meiryo").unwrap();
+
+        assert_eq!(font.to_oudia_string(), "Facename=Meiryo");
+    }
+
+    #[test]
+    fn rejects_missing_and_empty_font_names() {
+        assert!(matches!(
+            FontProp::from_str("Bold=1"),
+            Err(Error::KeyIsNotFound(_))
+        ));
+        assert!(matches!(
+            FontProp::from_str("Facename="),
+            Err(Error::EmptyValue(_))
+        ));
+        assert!(matches!(
+            FontProp::from_str("Facename"),
+            Err(Error::InvalidFormat { .. })
+        ));
+    }
+
+    #[test]
+    fn rejects_invalid_font_properties() {
+        assert!(matches!(
+            FontProp::from_str("Facename"),
+            Err(Error::InvalidFormat { .. })
+        ));
+        assert!(matches!(
+            FontProp::from_str("PointTextHeight=x;Facename=Meiryo"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            FontProp::from_str("LogicalunitTextHeight=x;Facename=Meiryo"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            FontProp::from_str("LogicalunitCellHeight=x;Facename=Meiryo"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            FontProp::from_str("Escapement=x;Facename=Meiryo"),
+            Err(Error::InvalidNumber { .. })
+        ));
+    }
+}

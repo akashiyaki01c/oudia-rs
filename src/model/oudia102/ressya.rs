@@ -163,3 +163,85 @@ impl fmt::Display for Houkou {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Houkou;
+    use super::Ressya;
+    use crate::{
+        model::error::Error,
+        opt::{directory::Directory, node::Node, property::Property},
+    };
+    use std::str::FromStr;
+
+    #[test]
+    fn parses_and_displays_train_directions() {
+        assert_eq!(Houkou::from_str("Kudari").unwrap(), Houkou::Kudari);
+        assert_eq!(Houkou::from_str("Nobori").unwrap(), Houkou::Nobori);
+        assert_eq!(Houkou::Kudari.to_string(), "Kudari");
+        assert_eq!(Houkou::Nobori.to_string(), "Nobori");
+        assert!(matches!(
+            Houkou::from_str("unknown"),
+            Err(Error::InvalidEnum { .. })
+        ));
+    }
+
+    #[test]
+    fn parses_and_writes_all_train_properties() {
+        let node = Node::Directory(Directory::new_with_value(
+            "Ressya",
+            vec![
+                Node::Property(Property::new_with_value("Houkou", "Kudari".to_string())),
+                Node::Property(Property::new_with_value("Syubetsu", "2".to_string())),
+                Node::Property(Property::new_with_value("Ressyabangou", "A1".to_string())),
+                Node::Property(Property::new_with_value("Ressyamei", "Rapid".to_string())),
+                Node::Property(Property::new_with_value("Gosuu", "3".to_string())),
+                Node::Property(Property::new_with_value(
+                    "EkiJikoku",
+                    "1;1234/1256,2;1300".to_string(),
+                )),
+                Node::Property(Property::new_with_value("Bikou", "note".to_string())),
+            ],
+        ));
+        let train = Ressya::from_node(&node).unwrap();
+
+        assert_eq!(train.to_node(), node);
+    }
+
+    #[test]
+    fn handles_missing_direction_and_invalid_properties() {
+        let node = Node::Directory(Directory::new_with_value("Ressya", vec![]));
+        let train = Ressya::from_node(&node).unwrap();
+        assert_eq!(train.to_node(), node);
+
+        let node = Node::Directory(Directory::new_with_value(
+            "Ressya",
+            vec![Node::Property(Property::new_with_value(
+                "Houkou",
+                "Nobori".to_string(),
+            ))],
+        ));
+        assert!(matches!(
+            Ressya::from_node(&node).unwrap().to_node(),
+            Node::Directory(_)
+        ));
+
+        assert!(matches!(
+            Ressya::from_node(&Node::Property(Property::new_with_value(
+                "Ressya",
+                String::new()
+            ))),
+            Err(Error::NodeTypeError)
+        ));
+        assert!(matches!(
+            Ressya::from_node(&Node::Directory(Directory::new_with_value(
+                "Ressya",
+                vec![
+                    Node::Property(Property::new_with_value("Houkou", "Kudari".to_string())),
+                    Node::Property(Property::new_with_value("Syubetsu", "invalid".to_string())),
+                ]
+            ))),
+            Err(Error::InvalidNumber { .. })
+        ));
+    }
+}

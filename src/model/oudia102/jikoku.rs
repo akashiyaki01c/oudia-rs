@@ -143,3 +143,104 @@ impl Jikoku {
             .unwrap_or_default()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Jikoku;
+    use crate::model::error::Error;
+    use std::str::FromStr;
+
+    #[test]
+    fn parses_and_formats_supported_time_lengths() {
+        for (value, expected) in [
+            ("", ""),
+            ("123", "123"),
+            ("1234", "1234"),
+            ("12345", "12345"),
+            ("123456", "123456"),
+        ] {
+            assert_eq!(Jikoku::from_str(value).unwrap().to_oudia_string(), expected);
+        }
+    }
+
+    #[test]
+    fn formats_single_and_double_digit_hours_with_seconds() {
+        assert_eq!(Jikoku::from_str("123").unwrap().to_oudia_string(), "123");
+        assert_eq!(
+            Jikoku::from_str("12345").unwrap().to_oudia_string(),
+            "12345"
+        );
+        assert_eq!(
+            Jikoku::from_str("121234").unwrap().to_oudia_string(),
+            "121234"
+        );
+    }
+
+    #[test]
+    fn adjusts_time_after_one_day() {
+        let time = Jikoku::from_str("250000").unwrap();
+
+        assert_eq!(time.adjust_total_seconds().to_oudia_string(), "100");
+        assert_eq!(Jikoku::default().adjust_total_seconds(), Jikoku::default());
+    }
+
+    #[test]
+    fn rejects_invalid_time_formats_and_numbers() {
+        assert!(matches!(
+            Jikoku::from_str("12"),
+            Err(Error::InvalidFormat { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("1a0"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("a00"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("120a"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("aa00"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("12a0"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("12a45"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("a0000"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("1aa00"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("100a0"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("123a56"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("aa0000"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("12a00"),
+            Err(Error::InvalidNumber { .. })
+        ));
+        assert!(matches!(
+            Jikoku::from_str("1200a0"),
+            Err(Error::InvalidNumber { .. })
+        ));
+    }
+}

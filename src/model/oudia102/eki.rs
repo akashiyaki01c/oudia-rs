@@ -247,3 +247,110 @@ impl DiagramRessyajouhouHyouji {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{DiagramRessyajouhouHyouji, Ekijikokukeisiki, Station, StationScale};
+    use crate::model::error::Error;
+    use crate::opt::{directory::Directory, node::Node, property::Property};
+    use std::str::FromStr;
+
+    #[test]
+    fn parses_station_display_formats() {
+        for (value, expected) in [
+            ("Jikokukeisiki_Hatsu", Ekijikokukeisiki::DepartureOnly),
+            (
+                "Jikokukeisiki_Hatsuchaku",
+                Ekijikokukeisiki::DepartureAndArrival,
+            ),
+            (
+                "Jikokukeisiki_KudariChaku",
+                Ekijikokukeisiki::OutboundArrival,
+            ),
+            (
+                "Jikokukeisiki_NoboriChaku",
+                Ekijikokukeisiki::InboundArrival,
+            ),
+        ] {
+            assert_eq!(Ekijikokukeisiki::from_str(value).unwrap(), expected);
+        }
+        assert!(matches!(
+            Ekijikokukeisiki::from_str("unknown"),
+            Err(Error::InvalidEnum { .. })
+        ));
+        assert!(matches!(
+            Ekijikokukeisiki::from_str(""),
+            Err(Error::InvalidEnum { .. })
+        ));
+    }
+
+    #[test]
+    fn parses_station_scales() {
+        assert_eq!(
+            StationScale::from_str("Ekikibo_Ippan").unwrap(),
+            StationScale::Normal
+        );
+        assert_eq!(
+            StationScale::from_str("Ekikibo_Syuyou").unwrap(),
+            StationScale::Terminal
+        );
+        assert!(matches!(
+            StationScale::from_str("unknown"),
+            Err(Error::InvalidEnum { .. })
+        ));
+        assert!(matches!(
+            StationScale::from_str(""),
+            Err(Error::InvalidEnum { .. })
+        ));
+    }
+
+    #[test]
+    fn parses_diagram_train_information_display() {
+        assert_eq!(
+            DiagramRessyajouhouHyouji::from_str("").unwrap(),
+            DiagramRessyajouhouHyouji::Origin
+        );
+        assert_eq!(
+            DiagramRessyajouhouHyouji::from_str("DiagramRessyajouhouHyouji_Anytime").unwrap(),
+            DiagramRessyajouhouHyouji::Anytime
+        );
+        assert_eq!(
+            DiagramRessyajouhouHyouji::from_str("DiagramRessyajouhouHyouji_Not").unwrap(),
+            DiagramRessyajouhouHyouji::Not
+        );
+        assert!(matches!(
+            DiagramRessyajouhouHyouji::from_str("unknown"),
+            Err(Error::InvalidEnum { .. })
+        ));
+    }
+
+    #[test]
+    fn parses_and_writes_station_options() {
+        let node = Node::Directory(Directory::new_with_value(
+            "Eki",
+            vec![
+                Node::Property(Property::new_with_value("Ekimei", "Tokyo".to_string())),
+                Node::Property(Property::new_with_value(
+                    "Ekijikokukeisiki",
+                    "Jikokukeisiki_Hatsuchaku".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "Ekikibo",
+                    "Ekikibo_Syuyou".to_string(),
+                )),
+                Node::Property(Property::new_with_value("Kyoukaisen", "1".to_string())),
+                Node::Property(Property::new_with_value(
+                    "DiagramRessyajouhouHyoujiKudari",
+                    "DiagramRessyajouhouHyouji_Anytime".to_string(),
+                )),
+                Node::Property(Property::new_with_value(
+                    "DiagramRessyajouhouHyoujiNobori",
+                    "DiagramRessyajouhouHyouji_Not".to_string(),
+                )),
+            ],
+        ));
+        let station = Station::from_node(&node).unwrap();
+
+        assert_eq!(station.to_node(), node);
+    }
+}

@@ -108,3 +108,50 @@ impl Rosen {
 fn property(name: &str, value: impl Into<String>) -> Node {
     Node::Property(Property::new_with_value(name, value.into()))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Rosen;
+    use crate::{
+        model::error::Error,
+        opt::{directory::Directory, node::Node, property::Property},
+    };
+
+    fn property(name: &str, value: &str) -> Node {
+        Node::Property(Property::new_with_value(name, value.to_string()))
+    }
+
+    #[test]
+    fn parses_and_writes_basic_route_properties() {
+        let node = Node::Directory(Directory::new_with_value(
+            "Rosen",
+            vec![
+                property("Rosenmei", "Main line"),
+                property("KitenJikoku", "1234"),
+                property("DiagramDgrYZahyouKyoriDefault", "80"),
+                property("Comment", "note"),
+            ],
+        ));
+
+        assert_eq!(Rosen::from_node(&node).unwrap().to_node(), node);
+    }
+
+    #[test]
+    fn uses_default_route_spacing_and_rejects_invalid_nodes() {
+        let node = Node::Directory(Directory::new_with_value("Rosen", vec![]));
+        let route = Rosen::from_node(&node).unwrap();
+        assert!(matches!(route.to_node(), Node::Directory(_)));
+
+        assert!(matches!(
+            Rosen::from_node(&property("Rosen", "value")),
+            Err(Error::NodeTypeError)
+        ));
+        assert!(matches!(
+            Rosen::from_node(&Node::Directory(Directory::new_with_value(
+                "Rosen",
+                vec![property("DiagramDgrYZahyouKyoriDefault", "invalid")]
+            ))),
+            Err(Error::InvalidNumber { .. })
+        ));
+    }
+}

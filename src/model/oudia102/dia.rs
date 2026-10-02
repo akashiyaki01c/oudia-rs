@@ -90,3 +90,104 @@ fn direction(name: &str, ressya: &[Ressya]) -> Node {
 fn property(name: &str, value: impl Into<String>) -> Node {
     Node::Property(Property::new_with_value(name, value.into()))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Dia;
+    use crate::{
+        model::error::Error,
+        opt::{directory::Directory, node::Node, property::Property},
+    };
+
+    fn property(name: &str, value: &str) -> Node {
+        Node::Property(Property::new_with_value(name, value.to_string()))
+    }
+
+    fn directory(name: &str, values: Vec<Node>) -> Node {
+        Node::Directory(Directory::new_with_value(name, values))
+    }
+
+    fn valid_dia() -> Node {
+        directory(
+            "Dia",
+            vec![
+                property("DiaName", "Weekday"),
+                directory("Kudari", vec![]),
+                directory("Nobori", vec![]),
+            ],
+        )
+    }
+
+    #[test]
+    fn accepts_empty_train_lists() {
+        assert!(Dia::from_node(&valid_dia()).is_ok());
+    }
+
+    #[test]
+    fn rejects_invalid_dia_nodes() {
+        assert!(matches!(
+            Dia::from_node(&property("Dia", "value")),
+            Err(Error::NodeTypeError)
+        ));
+        assert!(matches!(
+            Dia::from_node(&directory(
+                "Dia",
+                vec![
+                    property("DiaName", ""),
+                    directory("Kudari", vec![]),
+                    directory("Nobori", vec![])
+                ]
+            )),
+            Err(Error::InvalidValue(_, _))
+        ));
+        assert!(matches!(
+            Dia::from_node(&directory(
+                "Dia",
+                vec![directory("Kudari", vec![]), directory("Nobori", vec![])]
+            )),
+            Err(Error::KeyIsNotFound(_))
+        ));
+        assert!(matches!(
+            Dia::from_node(&directory(
+                "Dia",
+                vec![property("DiaName", "Weekday"), property("Kudari", "value")]
+            )),
+            Err(Error::KeyIsNotFound(_))
+        ));
+        assert!(matches!(
+            Dia::from_node(&directory(
+                "Dia",
+                vec![
+                    property("DiaName", "Weekday"),
+                    directory(
+                        "Kudari",
+                        vec![property("Ressya", "one"), property("Other", "two")],
+                    ),
+                    directory("Nobori", vec![]),
+                ]
+            )),
+            Err(Error::ExpectedArray(_))
+        ));
+        assert!(matches!(
+            Dia::from_node(&directory(
+                "Dia",
+                vec![property("DiaName", "Weekday"), directory("Kudari", vec![])]
+            )),
+            Err(Error::KeyIsNotFound(_))
+        ));
+        assert!(matches!(
+            Dia::from_node(&directory(
+                "Dia",
+                vec![
+                    property("DiaName", "Weekday"),
+                    directory("Kudari", vec![]),
+                    directory(
+                        "Nobori",
+                        vec![property("Ressya", "one"), property("Other", "two")],
+                    ),
+                ]
+            )),
+            Err(Error::ExpectedArray(_))
+        ));
+    }
+}

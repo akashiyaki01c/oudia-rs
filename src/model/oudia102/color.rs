@@ -47,3 +47,11 @@ fn color_props_to_string() {
     let parsed = ColorProp::from_str(&str).unwrap();
     assert_eq!(color, parsed)
 }
+
+#[test]
+fn invalid_color_is_rejected() {
+    assert!(matches!(
+        ColorProp::from_str("not-a-color"),
+        Err(Error::InvalidColor(_))
+    ));
+}

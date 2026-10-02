@@ -71,3 +71,29 @@ impl Ekijikoku {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Ekijikoku;
+    use crate::model::error::Error;
+    use std::str::FromStr;
+
+    #[test]
+    fn parses_and_writes_station_times() {
+        for value in ["", "1", "1;1234", "1;1234/1256"] {
+            assert_eq!(Ekijikoku::from_str(value).unwrap().to_oudia_string(), value);
+        }
+        assert_eq!(
+            Ekijikoku::from_str("1;1234/").unwrap().to_oudia_string(),
+            "1;1234/"
+        );
+    }
+
+    #[test]
+    fn rejects_invalid_station_handling_number() {
+        assert!(matches!(
+            Ekijikoku::from_str("x;1234"),
+            Err(Error::InvalidNumber { .. })
+        ));
+    }
+}
